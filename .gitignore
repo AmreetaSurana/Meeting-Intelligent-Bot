@@ -1,0 +1,8 @@
+.env 
+venv/
+.kiro/
+__pycache__/
+*.db
+*.txt
+*.vtt
+credentials.json
