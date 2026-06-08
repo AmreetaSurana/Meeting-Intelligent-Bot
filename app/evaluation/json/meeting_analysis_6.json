@@ -1,0 +1,42 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_09",
+    "date": "2026-06-09",
+    "title": "Software Release Retrospective",
+    "attendees": ["Aditya Nair", "Rhea Kapoor", "Mohit Bansal", "Simran Kaur"]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Fix bugs in payment module",
+      "owner": "Rhea Kapoor",
+      "due_date": "2026-06-10",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [],
+      "_note": null
+    },
+    {
+      "id": "task_002",
+      "title": "Update project documentation post-release",
+      "owner": "Simran Kaur",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Schedule improved testing procedures for future releases",
+      "rationale": null,
+      "status": "confirmed",
+      "missing_fields": ["rationale"],
+      "_note": null
+    }
+  ],
+  "blockers": [],
+  "ambiguous": []
+}

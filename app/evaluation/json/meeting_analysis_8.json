@@ -1,0 +1,42 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_11",
+    "date": "2026-06-11",
+    "title": "Supply Chain Optimization Discussion",
+    "attendees": ["Vikram Reddy", "Anjali Sharma", "Sameer Khan", "Ritu Patel"]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Contact and evaluate new vendors for supply chain",
+      "owner": "Anjali Sharma",
+      "due_date": "2026-06-13",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [],
+      "_note": null
+    },
+    {
+      "id": "task_002",
+      "title": "Complete cost analysis for logistics options",
+      "owner": "Ritu Patel",
+      "due_date": null,
+      "priority": "high",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Switch to new vendors if cost analysis aligns favorably",
+      "rationale": null,
+      "status": "pending",
+      "missing_fields": ["rationale"],
+      "_note": "Depends on cost analysis"
+    }
+  ],
+  "blockers": [],
+  "ambiguous": []
+}

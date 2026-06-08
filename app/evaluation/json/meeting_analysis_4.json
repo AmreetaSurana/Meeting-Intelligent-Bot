@@ -1,0 +1,42 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_07",
+    "date": "2026-06-07",
+    "title": "Annual Budget Review Discussion",
+    "attendees": ["Deepak Sharma", "Lavanya Reddy", "Pranav Iyer", "Ishita Bose"]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Prepare revised budget sheet with cost cuts",
+      "owner": "Pranav Iyer",
+      "due_date": "2026-06-13",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [],
+      "_note": null
+    },
+    {
+      "id": "task_002",
+      "title": "Present reallocation proposal to leadership",
+      "owner": "Ishita Bose",
+      "due_date": null,
+      "priority": "high",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Prioritize R&D investment in the budget",
+      "rationale": null,
+      "status": "confirmed",
+      "missing_fields": ["rationale"],
+      "_note": null
+    }
+  ],
+  "blockers": [],
+  "ambiguous": []
+}

@@ -1,0 +1,52 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_04",
+    "date": "2026-06-04",
+    "title": "Q3 Marketing Campaign Strategy Session",
+    "attendees": ["Priya Mehta", "Arjun Rao", "Sneha Kapoor", "Vikram Singh"]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Research top influencers for Q3 campaign",
+      "owner": "Arjun Rao",
+      "due_date": "2026-06-11",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [],
+      "_note": null
+    },
+    {
+      "id": "task_002",
+      "title": "Prepare budget proposal for Q3 marketing",
+      "owner": "Sneha Kapoor",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    },
+    {
+      "id": "task_003",
+      "title": "Update team dashboard with multi-channel campaign details",
+      "owner": "Vikram Singh",
+      "due_date": "2026-06-06",
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [],
+      "_note": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Adopt a multi-channel approach including social media, ads, and email newsletters",
+      "rationale": "To increase brand visibility by 30%",
+      "status": "confirmed",
+      "missing_fields": [],
+      "_note": null
+    }
+  ],
+  "blockers": [],
+  "ambiguous": []
+}

@@ -1,0 +1,42 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_06",
+    "date": "2026-06-06",
+    "title": "Team Building Activity Planning",
+    "attendees": ["Sanya Gupta", "Rajesh Kumar", "Meera Nair", "Amit Verma"]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Book venue for team outing",
+      "owner": "Rajesh Kumar",
+      "due_date": "2026-06-10",
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [],
+      "_note": null
+    },
+    {
+      "id": "task_002",
+      "title": "Organize transportation for team building event",
+      "owner": "Meera Nair",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    }
+  ],
+  "decisions": [],
+  "blockers": [
+    {
+      "id": "blk_001",
+      "task": "Proceed with team outing planning (Sanya Gupta)",
+      "blocked_by": "Budget approval from finance",
+      "owner": null,
+      "ticket": null,
+      "missing_fields": ["owner"]
+    }
+  ],
+  "ambiguous": []
+}

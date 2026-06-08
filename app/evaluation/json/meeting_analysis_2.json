@@ -1,0 +1,61 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_05",
+    "date": "2026-06-05",
+    "title": "Product Launch Planning for New App Feature",
+    "attendees": ["Rohan Patel", "Anika Desai", "Karan Malhotra", "Neha Joshi"]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Coordinate with QA team for feature testing",
+      "owner": "Anika Desai",
+      "due_date": null,
+      "priority": "high",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    },
+    {
+      "id": "task_002",
+      "title": "Resolve API integration issue for authentication feature",
+      "owner": "Karan Malhotra",
+      "due_date": null,
+      "priority": "high",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    },
+    {
+      "id": "task_003",
+      "title": "Prepare launch announcement for new feature",
+      "owner": "Anika Desai",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Launch the new user authentication feature on June 20th",
+      "rationale": null,
+      "status": "confirmed",
+      "missing_fields": ["rationale"],
+      "_note": null
+    }
+  ],
+  "blockers": [
+    {
+      "id": "blk_001",
+      "task": "API integration for authentication feature (Karan Malhotra)",
+      "blocked_by": "Dependency on backend team",
+      "owner": null,
+      "ticket": null,
+      "missing_fields": ["owner"]
+    }
+  ],
+  "ambiguous": []
+}

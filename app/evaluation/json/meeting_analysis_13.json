@@ -1,0 +1,40 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_16",
+    "date": "2026-06-16",
+    "title": "Vendor Contract Negotiation Prep",
+    "attendees": ["Sahil Verma", "Naina Chopra", "Arpit Jain", "Kriti Sharma"]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "List key negotiation points for vendor contract",
+      "owner": "Naina Chopra",
+      "due_date": "2026-06-16",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [],
+      "_note": null
+    },
+    {
+      "id": "task_002",
+      "title": "Review legal aspects of contract terms",
+      "owner": "Kriti Sharma",
+      "due_date": null,
+      "priority": "high",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    }
+  ],
+  "decisions": [],
+  "blockers": [],
+  "ambiguous": [
+    {
+      "id": "amb_001",
+      "description": "Aim for better pricing in negotiations",
+      "owner": null,
+      "_note": "Unclear specific target or strategy details"
+    }
+  ]
+}

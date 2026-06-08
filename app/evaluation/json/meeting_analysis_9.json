@@ -1,0 +1,42 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_12",
+    "date": "2026-06-12",
+    "title": "Sales Performance Quarterly Review",
+    "attendees": ["Niharika Jain", "Karan Thakur", "Swati Mehra", "Akash Pillai"]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Analyze regional sales data variations",
+      "owner": "Karan Thakur",
+      "due_date": "2026-06-15",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [],
+      "_note": null
+    },
+    {
+      "id": "task_002",
+      "title": "Design new incentive program for sales team",
+      "owner": "Akash Pillai",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Roll out additional training sessions for sales teams",
+      "rationale": null,
+      "status": "confirmed",
+      "missing_fields": ["rationale"],
+      "_note": null
+    }
+  ],
+  "blockers": [],
+  "ambiguous": []
+}

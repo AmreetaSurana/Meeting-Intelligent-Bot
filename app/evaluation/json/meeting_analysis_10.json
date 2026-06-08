@@ -1,0 +1,42 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_13",
+    "date": "2026-06-13",
+    "title": "Website Redesign Kickoff",
+    "attendees": ["Esha Roy", "Manav Gupta", "Rina Sethi", "Yash Khurana"]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Create wireframes for new website design",
+      "owner": "Manav Gupta",
+      "due_date": "2026-06-20",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [],
+      "_note": null
+    },
+    {
+      "id": "task_002",
+      "title": "Conduct content audit for migration",
+      "owner": "Yash Khurana",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Adopt modern UI framework for the redesign",
+      "rationale": null,
+      "status": "confirmed",
+      "missing_fields": ["rationale"],
+      "_note": null
+    }
+  ],
+  "blockers": [],
+  "ambiguous": []
+}

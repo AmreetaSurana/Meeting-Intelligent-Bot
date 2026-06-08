@@ -1,0 +1,42 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_18",
+    "date": "2026-06-18",
+    "title": "Partnership Exploration Call",
+    "attendees": ["Ishaan Kumar", "Sara Ali", "Vivaan Mehta", "Kiara Nair"]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Prepare collaboration proposal for potential partner",
+      "owner": "Sara Ali",
+      "due_date": "2026-06-20",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [],
+      "_note": null
+    },
+    {
+      "id": "task_002",
+      "title": "Consult legal team on data sharing and partnership terms",
+      "owner": "Kiara Nair",
+      "due_date": null,
+      "priority": "high",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Proceed with partnership if terms are favorable",
+      "rationale": null,
+      "status": "pending",
+      "missing_fields": ["rationale"],
+      "_note": "Conditional on legal review and terms"
+    }
+  ],
+  "blockers": [],
+  "ambiguous": []
+}

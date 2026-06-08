@@ -1,0 +1,42 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_14",
+    "date": "2026-06-14",
+    "title": "Customer Support Training Session Planning",
+    "attendees": ["Zara Khan", "Faisal Ahmed", "Lata Verma", "Omkar Rao"]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Prepare training modules on new product features",
+      "owner": "Faisal Ahmed",
+      "due_date": "2026-06-20",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [],
+      "_note": null
+    },
+    {
+      "id": "task_002",
+      "title": "Book training room and handle logistics",
+      "owner": "Omkar Rao",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": ["due_date"],
+      "_note": null
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Start customer support training next month",
+      "rationale": null,
+      "status": "confirmed",
+      "missing_fields": ["rationale"],
+      "_note": null
+    }
+  ],
+  "blockers": [],
+  "ambiguous": []
+}
