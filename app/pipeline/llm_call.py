@@ -124,7 +124,7 @@ SYSTEM_PROMPT = """
 
    ---
 
-   Return only the JSON now.
+   Return only the JSON now. 
 """
 
 def llm_for_structured_json(transcript_text: str) -> str:

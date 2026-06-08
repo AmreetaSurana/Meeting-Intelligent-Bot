@@ -290,6 +290,23 @@ def load_meeting_data(meeting_id: str) -> dict:
     finally:
         conn.close()
 
+def get_meeting_meta(meeting_id: str):
+    conn = get_connection()
+
+    try:
+        row = conn.execute(
+            """
+            SELECT title, date
+            FROM meetings
+            WHERE id = ?
+            """,
+            (meeting_id,)
+        ).fetchone()
+
+        return dict(row) if row else None
+
+    finally:
+        conn.close()
 
 def delete_meeting(meeting_id: str):
     """Delete a meeting and all its related records (CASCADE handles child rows)."""
@@ -445,10 +462,18 @@ def insert_ambiguous(meeting_id: str):
         conn.close()
 
 
-def delete_row(table: str, row_id: str):
+def delete_row(table: str, row_id: str, meeting_id: str):
+    """
+    Delete a single row identified by BOTH id AND meeting_id.
+    With composite PK (id, meeting_id), id alone is not unique across
+    meetings — meeting_id is required to target the correct row.
+    """
     conn = get_connection()
     try:
-        conn.execute(f"DELETE FROM {table} WHERE id=?", (row_id,))
+        conn.execute(
+            f"DELETE FROM {table} WHERE id=? AND meeting_id=?",
+            (row_id, meeting_id)
+        )
         conn.commit()
     finally:
         conn.close()
@@ -504,7 +529,7 @@ def render_tasks_table(tasks: list[dict], meeting_id: str):
     with c4:
         if del_sel != "— select row to delete —" and st.button("🗑 Delete Row", key="del_task_btn"):
             idx = del_opts.index(del_sel) - 1
-            delete_row("action_items", tasks[idx]["id"])
+            delete_row("action_items", tasks[idx]["id"], meeting_id)
             st.rerun()
 
     st.markdown('<div style="height:6px"></div>', unsafe_allow_html=True)
@@ -523,16 +548,12 @@ def render_tasks_table(tasks: list[dict], meeting_id: str):
         c[0].markdown(f'<div class="tbl-id">{i+1}</div>', unsafe_allow_html=True)
         # _id_cell(c[1], t["id"].split("_")[-1])   # show only sequence number
         row = {"id": t["id"]}
-        row["title"]    = c[1].text_area("Title", value=t.get("title")    or "", height=100, key=f"t_title_{i}", label_visibility="collapsed")
-        row["owner"]    = c[2].text_input("Task Owner", value=t.get("owner")    or "", key=f"t_owner_{i}", label_visibility="collapsed")
-        row["due_date"] = c[3].text_input("Due Date", value=t.get("due_date") or "", key=f"t_date_{i}",  label_visibility="collapsed")
-        row["priority"] = c[4].selectbox("Pripority", ["high","medium","low"],
-            index=["high","medium","low"].index(t.get("priority") or "medium"),
-            key=f"t_pri_{i}", label_visibility="collapsed")
-        row["status"]   = c[5].selectbox("Status", ["open","on_hold","blocked"],
-            index=["open","on_hold","blocked"].index(t.get("status") or "open"),
-            key=f"t_stat_{i}", label_visibility="collapsed")
-        row["note"]     = c[6].text_area("Note", value=t.get("note")     or "", height=100, key=f"t_note_{i}",  label_visibility="collapsed")
+        row["title"]    = c[1].text_area("Title", value=t.get("title")    or "", height=100, key=f"{meeting_id}_t_title_{i}", label_visibility="collapsed")
+        row["owner"]    = c[2].text_input("Task Owner", value=t.get("owner")    or "", key=f"{meeting_id}_t_owner_{i}", label_visibility="collapsed")
+        row["due_date"] = c[3].text_input("Due Date", value=t.get("due_date") or "", key=f"{meeting_id}_t_date_{i}",  label_visibility="collapsed")
+        row["priority"] = c[4].selectbox("Pripority", ["high","medium","low"], index=["high","medium","low"].index(t.get("priority") or "medium"), key=f"{meeting_id}_t_pri_{i}", label_visibility="collapsed")
+        row["status"]   = c[5].selectbox("Status", ["open","on_hold","blocked"], index=["open","on_hold","blocked"].index(t.get("status") or "open"), key=f"{meeting_id}_t_stat_{i}", label_visibility="collapsed")
+        row["note"]     = c[6].text_area("Note", value=t.get("note")     or "", height=100, key=f"{meeting_id}_t_note_{i}",  label_visibility="collapsed")
         edited_rows.append(row)
 
         st.markdown(
@@ -565,7 +586,7 @@ def render_blockers_table(blockers: list[dict], meeting_id: str):
     with c4:
         if del_sel != "— select row to delete —" and st.button("🗑 Delete Row", key="del_blk_btn"):
             idx = del_opts.index(del_sel) - 1
-            delete_row("blockers", blockers[idx]["id"])
+            delete_row("blockers", blockers[idx]["id"], meeting_id)
             st.rerun()
 
     st.markdown('<div style="height:6px"></div>', unsafe_allow_html=True)
@@ -580,10 +601,10 @@ def render_blockers_table(blockers: list[dict], meeting_id: str):
         c = st.columns(cols)
         c[0].markdown(f'<div class="tbl-id">{i+1}</div>', unsafe_allow_html=True)
         row = {"id": b["id"]}
-        row["task"]       = c[1].text_area("Task", value=b.get("task")       or "",height=100, key=f"b_task_{i}", label_visibility="collapsed")
-        row["blocked_by"] = c[2].text_area("Blocked By", value=b.get("blocked_by") or "",height=100, key=f"b_by_{i}",   label_visibility="collapsed")
-        row["owner"]      = c[3].text_input("Task Owner", value=b.get("owner")      or "", key=f"b_own_{i}",  label_visibility="collapsed")
-        row["ticket"]     = c[4].text_input("Ticket", value=b.get("ticket")     or "", key=f"b_tkt_{i}",  label_visibility="collapsed")
+        row["task"]       = c[1].text_area("Task", value=b.get("task")       or "",height=100, key=f"{meeting_id}_b_task_{i}", label_visibility="collapsed")
+        row["blocked_by"] = c[2].text_area("Blocked By", value=b.get("blocked_by") or "",height=100, key=f"{meeting_id}_b_by_{i}",   label_visibility="collapsed")
+        row["owner"]      = c[3].text_input("Task Owner", value=b.get("owner")      or "", key=f"{meeting_id}_b_own_{i}",  label_visibility="collapsed")
+        row["ticket"]     = c[4].text_input("Ticket", value=b.get("ticket")     or "", key=f"{meeting_id}_b_tkt_{i}",  label_visibility="collapsed")
         edited_rows.append(row)
 
         st.markdown(
@@ -616,7 +637,7 @@ def render_decisions_table(decisions: list[dict], meeting_id: str):
     with c4:
         if del_sel != "— select row to delete —" and st.button("🗑 Delete Row", key="del_dec_btn"):
             idx = del_opts.index(del_sel) - 1
-            delete_row("decisions", decisions[idx]["id"])
+            delete_row("decisions", decisions[idx]["id"], meeting_id)
             st.rerun()
 
     st.markdown('<div style="height:6px"></div>', unsafe_allow_html=True)
@@ -631,12 +652,12 @@ def render_decisions_table(decisions: list[dict], meeting_id: str):
         c = st.columns(cols)
         c[0].markdown(f'<div class="tbl-id">{i+1}</div>', unsafe_allow_html=True)
         row = {"id": d["id"]}
-        row["decision"]  = c[1].text_area("Decisions", value=d.get("decision")  or "", height=100, key=f"d_dec_{i}",  label_visibility="collapsed")
-        row["rationale"] = c[2].text_area("Rationale", value=d.get("rationale") or "", height=100, key=f"d_rat_{i}",  label_visibility="collapsed")
+        row["decision"]  = c[1].text_area("Decisions", value=d.get("decision")  or "", height=100, key=f"{meeting_id}_d_dec_{i}",  label_visibility="collapsed")
+        row["rationale"] = c[2].text_area("Rationale", value=d.get("rationale") or "", height=100, key=f"{meeting_id}_d_rat_{i}",  label_visibility="collapsed")
         stat_opts = ["confirmed","deferred","pending"]
         row["status"] = c[3].selectbox("Status", stat_opts, index=stat_opts.index(d.get("status") or "pending"),
-            key=f"d_stat_{i}", label_visibility="collapsed")
-        row["note"]      = c[4].text_area("Note", value=d.get("note") or "", height=100, key=f"d_note_{i}", label_visibility="collapsed")
+            key=f"{meeting_id}_d_stat_{i}", label_visibility="collapsed")
+        row["note"]      = c[4].text_area("Note", value=d.get("note") or "", height=100, key=f"{meeting_id}_d_note_{i}", label_visibility="collapsed")
         edited_rows.append(row)
         
         st.markdown(
@@ -669,7 +690,7 @@ def render_ambiguous_table(ambiguous: list[dict], meeting_id: str):
     with c4:
         if del_sel != "— select row to delete —" and st.button("🗑 Delete Row", key="del_amb_btn"):
             idx = del_opts.index(del_sel) - 1
-            delete_row("ambiguous", ambiguous[idx]["id"])
+            delete_row("ambiguous", ambiguous[idx]["id"], meeting_id)
             st.rerun()
 
     st.markdown('<div style="height:6px"></div>', unsafe_allow_html=True)
@@ -684,9 +705,9 @@ def render_ambiguous_table(ambiguous: list[dict], meeting_id: str):
         c = st.columns(cols)
         c[0].markdown(f'<div class="tbl-id">{i+1}</div>', unsafe_allow_html=True)
         row = {"id": a["id"]}
-        row["description"] = c[1].text_area("Description", value=a.get("description") or "", height=100, key=f"a_desc_{i}", label_visibility="collapsed")
-        row["owner"]       = c[2].text_input("Task Owner", value=a.get("owner") or "", key=f"a_own_{i}",  label_visibility="collapsed")
-        row["note"]        = c[3].text_area("Note", value=a.get("note") or "", height=100, key=f"a_note_{i}", label_visibility="collapsed")
+        row["description"] = c[1].text_area("Description", value=a.get("description") or "", height=100, key=f"{meeting_id}_a_desc_{i}", label_visibility="collapsed")
+        row["owner"]       = c[2].text_input("Task Owner", value=a.get("owner") or "", key=f"{meeting_id}_a_own_{i}",  label_visibility="collapsed")
+        row["note"]        = c[3].text_area("Note", value=a.get("note") or "", height=100, key=f"{meeting_id}_a_note_{i}", label_visibility="collapsed")
         edited_rows.append(row)
         
         st.markdown(
@@ -841,8 +862,29 @@ def main():
             return
 
         data = load_meeting_data(meeting_id)
-
+        meeting_meta = get_meeting_meta(meeting_id)
+        
         # Stat strip
+
+        if meeting_meta:
+            title = meeting_meta["title"]
+            date = meeting_meta["date"]
+            st.markdown(
+                f"""
+                <h1 style="
+                    margin-bottom:0;
+                    color:#450920;
+                    font-family:'DM Serif Display', serif;
+                ">
+                    {title}
+                </h1>
+                
+                <div style="color: var(--text-soft); font-size: 0.9rem; margin-top: 0.2rem;"> 
+                📅 {date}
+                </div>""",
+                unsafe_allow_html=True
+            )
+        
         st.markdown(f"""
         <div class="stat-row">
             <div class="stat-box"><div class="stat-num">{len(data["tasks"])}</div><div class="stat-lbl">Tasks</div></div>

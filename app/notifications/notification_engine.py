@@ -1,22 +1,21 @@
 """
 notification_engine.py
 ======================
-Reads all owners from a meeting's database tables, groups their
-assigned items by owner, builds a personalised digest email for
-each owner, and dispatches via Gmail API.
+Reads owners from the SELECTED meeting only, groups their assigned items
+by owner, builds a personalised digest email per owner, and sends via Gmail.
+
+Key fix: every query is filtered by meeting_id — data from other meetings
+is never touched, and only attendees of the selected meeting receive emails.
 
 Usage
 -----
-    # Send notifications for one meeting
     from app.notifications.notification_engine import notify_meeting
-    results = notify_meeting("meet_2026_05_29")
-
-    # Send for all meetings
-    from app.notifications.notification_engine import notify_all_meetings
-    notify_all_meetings()
+    results = notify_meeting("meet_2026_06_03_a3f7c1b8")
+    results = notify_meeting("meet_2026_06_03_a3f7c1b8", dry_run=True)
 
     # CLI
-    python -m app.notifications.notification_engine meet_2026_05_29
+    python -m app.notifications.notification_engine meet_2026_06_03_a3f7c1b8
+    python -m app.notifications.notification_engine meet_2026_06_03_a3f7c1b8 --dry-run
 """
 
 import logging
@@ -34,73 +33,150 @@ logger = logging.getLogger(__name__)
 
 
 # ════════════════════════════════════════════════════════
-#  Data extraction from DB
+#  Data extraction — ALL queries filtered by meeting_id
 # ════════════════════════════════════════════════════════
 
-def _get_meeting_meta(conn) -> dict:
-    """Fetch meeting title and date from the meeting table."""
-    row = conn.execute("SELECT title, date FROM meetings LIMIT 1").fetchone()
-    if row:
-        return {"title": row["title"] or "Meeting", "date": row["date"] or ""}
-    return {"title": "Meeting", "date": ""}
-
-
-def _collect_by_owner(conn) -> dict[str, dict]:
+def _get_meeting_meta(conn, meeting_id: str) -> dict:
     """
-    Query all four tables and group items by owner name.
+    Fetch title and date for this specific meeting only.
+
+    FIX: was 'SELECT ... FROM meetings LIMIT 1' with no WHERE clause —
+    always returned the first meeting's metadata regardless of which
+    meeting was selected. Now correctly filters by meeting_id.
+    """
+    row = conn.execute(
+        "SELECT title, date FROM meetings WHERE id = ?",
+        (meeting_id,)
+    ).fetchone()
+    if row:
+        return {
+            "title": row["title"] or "Untitled Meeting",
+            "date":  row["date"]  or "",
+        }
+    return {"title": "Untitled Meeting", "date": ""}
+
+
+def _collect_by_owner(conn, meeting_id: str) -> dict:
+    """
+    Group action_items, blockers, and ambiguous rows by owner name,
+    scoped strictly to this meeting.
+
+    FIX: was querying full tables with no WHERE clause — returned owners
+    and items from ALL meetings combined. Now every query includes
+    AND meeting_id = ? to restrict results to the selected meeting only.
 
     Returns:
-        Dict keyed by owner name, each value is:
-        {
-            tasks:     [list of task dicts],
-            blockers:  [list of blocker dicts],
-            decisions: [list of decision dicts],
-            ambiguous: [list of ambiguous dicts],
-        }
+        defaultdict keyed by owner name:
+        {"tasks": [...], "blockers": [...], "ambiguous": [...]}
     """
-    owners: dict[str, dict] = defaultdict(lambda: {
-        "tasks": [], "blockers": [], "decisions": [], "ambiguous": []
+    owners = defaultdict(lambda: {
+        "tasks": [], "blockers": [], "ambiguous": []
     })
 
-    # Tasks
+    # Tasks assigned to a named owner in this meeting
     for row in conn.execute(
-        "SELECT * FROM action_items WHERE owner IS NOT NULL AND owner != ''"
+    """
+        SELECT * FROM action_items
+        WHERE meeting_id = ?
+        AND owner IS NOT NULL
+        AND TRIM(owner) != ''
+        ORDER BY id
+        """,
+        (meeting_id,)
     ).fetchall():
-        owner = row["owner"].strip()
-        if owner:
+
+        raw_owner = row["owner"].strip()
+
+        owner_list = [
+            x.strip()
+            for x in raw_owner.replace("&", ",")
+                            .replace(" and ", ",")
+                            .split(",")
+            if x.strip()
+        ]
+
+        for owner in owner_list:
             owners[owner]["tasks"].append(dict(row))
 
-    # Blockers — owner = resolver
+    # Blockers whose resolver is in the owner column, in this meeting
     for row in conn.execute(
-        "SELECT * FROM blockers WHERE owner IS NOT NULL AND owner != ''"
+        """
+        SELECT * FROM blockers
+        WHERE meeting_id = ?
+          AND owner IS NOT NULL
+          AND TRIM(owner) != ''
+        ORDER BY id
+        """,
+        (meeting_id,)
     ).fetchall():
-        owner = row["owner"].strip()
-        if owner:
+        raw_owner = row["owner"].strip()
+
+        owner_list = [
+            x.strip()
+            for x in raw_owner.replace("&", ",")
+                            .replace(" and ", ",")
+                            .split(",")
+            if x.strip()
+        ]
+
+        for owner in owner_list:
             owners[owner]["blockers"].append(dict(row))
 
-    # Decisions — no direct owner column in decisions table
-    # so skip — decisions are broadcast to all attendees instead
-    # (see notify_meeting for broadcast logic)
-
-    # Ambiguous
+    # Ambiguous items with a named owner, in this meeting
     for row in conn.execute(
-        "SELECT * FROM ambiguous WHERE owner IS NOT NULL AND owner != ''"
+        """
+        SELECT * FROM ambiguous
+        WHERE meeting_id = ?
+          AND owner IS NOT NULL
+          AND TRIM(owner) != ''
+        ORDER BY id
+        """,
+        (meeting_id,)
     ).fetchall():
-        owner = row["owner"].strip()
-        if owner:
+        raw_owner = row["owner"].strip()
+
+        owner_list = [
+            x.strip()
+            for x in raw_owner.replace("&", ",")
+                            .replace(" and ", ",")   
+                            .split(",")
+            if x.strip()
+        ]
+
+        for owner in owner_list:
             owners[owner]["ambiguous"].append(dict(row))
 
     return owners
 
 
-def _get_all_decisions(conn) -> list[dict]:
-    """Fetch all decisions — these are sent to all attendees as a broadcast."""
-    return [dict(r) for r in conn.execute("SELECT * FROM decisions").fetchall()]
+def _get_decisions(conn, meeting_id: str) -> list[dict]:
+    """
+    Fetch all decisions for this meeting only.
+    Decisions are broadcast to every attendee of this meeting.
+
+    FIX: was querying all decisions across all meetings.
+    """
+    return [dict(r) for r in conn.execute(
+        "SELECT * FROM decisions WHERE meeting_id = ? ORDER BY id",
+        (meeting_id,)
+    ).fetchall()]
 
 
-def _get_attendees(conn) -> list[str]:
-    """Fetch all attendee names for this meeting."""
-    return [r["name"] for r in conn.execute("SELECT name FROM attendees").fetchall()]
+def _get_attendees(conn, meeting_id: str) -> list[str]:
+    """
+    Fetch attendee names for this meeting only.
+
+    FIX: was querying all attendees across all meetings, causing
+    people from other meetings to receive emails.
+    """
+    return [
+        r["name"].strip()
+        for r in conn.execute(
+            "SELECT name FROM attendees WHERE meeting_id = ? ORDER BY id",
+            (meeting_id,)
+        ).fetchall()
+        if r["name"] and r["name"].strip()
+    ]
 
 
 # ════════════════════════════════════════════════════════
@@ -109,50 +185,56 @@ def _get_attendees(conn) -> list[str]:
 
 def build_notifications(meeting_id: str) -> list[dict]:
     """
-    Build a list of notification dicts for every owner in this meeting.
+    Build a personalised notification for every person in the selected meeting.
 
-    Each notification covers:
-    - All tasks assigned to that owner
-    - All blockers the owner is responsible for resolving
-    - All decisions (broadcast to every attendee)
-    - All ambiguous items assigned to that owner
+    Who receives an email:
+    - Every named attendee of THIS meeting (not other meetings)
+    - Anyone who owns at least one task, blocker or ambiguous item in THIS meeting
+
+    What each email contains:
+    - Tasks assigned to that person (from this meeting)
+    - Blockers they own (from this meeting)
+    - All decisions from this meeting (broadcast to all attendees)
+    - Ambiguous items assigned to them (from this meeting)
 
     Args:
-        meeting_id: The meeting identifier (used to open the .db file).
+        meeting_id: The unique meeting identifier to send notifications for.
 
     Returns:
-        List of dicts: [{to, subject, html_body, owner_name}]
+        List of notification dicts: [{to, subject, html_body, owner_name}]
     """
+    # get_connection() with no arguments uses the default DB_PATH (meetings.db)
+    # Do NOT pass meeting_id here — it is not a file path
     conn = get_connection()
     try:
-        meta       = _get_meeting_meta(conn)
-        by_owner   = _collect_by_owner(conn)
-        decisions  = _get_all_decisions(conn)
-        attendees  = _get_attendees(conn)
+        meta      = _get_meeting_meta(conn, meeting_id)
+        by_owner  = _collect_by_owner(conn, meeting_id)
+        decisions = _get_decisions(conn, meeting_id)
+        attendees = _get_attendees(conn, meeting_id)
     finally:
         conn.close()
 
-    notifications = []
-
-    # ── Per-owner notifications ───────────────────────────────────────────────
-    # Union of owners (from tasks+blockers+ambiguous) and attendees
+    # Only people in THIS meeting — union of named owners and listed attendees
     all_people = set(by_owner.keys()) | set(attendees)
 
+    if not all_people:
+        logger.warning("No people found for meeting %s.", meeting_id)
+        return []
+
+    notifications = []
+
     for person in sorted(all_people):
-        if not person.strip():
+        if not person:
             continue
-
-        assigned = by_owner.get(person, {
-            "tasks": [], "blockers": [], "decisions": [], "ambiguous": []
-        })
-
-        # Everyone gets the decisions section
-        person_decisions = decisions
 
         email_address = owner_to_email(person)
         if not email_address:
-            logger.warning("Could not build email for owner: %s", person)
+            logger.warning("Skipping %s — could not build email address.", person)
             continue
+
+        assigned = by_owner.get(person, {
+            "tasks": [], "blockers": [], "ambiguous": []
+        })
 
         html_body = build_email(
             owner_name    = person,
@@ -160,12 +242,13 @@ def build_notifications(meeting_id: str) -> list[dict]:
             meeting_date  = meta["date"],
             tasks         = assigned["tasks"],
             blockers      = assigned["blockers"],
-            decisions     = person_decisions,
+            decisions     = decisions,        # broadcast to all attendees
             ambiguous     = assigned["ambiguous"],
         )
 
         subject = (
-            f"[Meeting Bot] Your action items — {meta['title']} ({meta['date']})"
+            f"[Meeting Bot] Your action items — "
+            f"{meta['title']} ({meta['date']})"
         )
 
         notifications.append({
@@ -176,130 +259,127 @@ def build_notifications(meeting_id: str) -> list[dict]:
         })
 
         logger.info(
-            "Built notification for %s (%s) — %d tasks, %d blockers, "
-            "%d decisions, %d ambiguous",
+            "Notification for %-22s (%s) | tasks=%d  blockers=%d  "
+            "decisions=%d  ambiguous=%d",
             person, email_address,
-            len(assigned["tasks"]), len(assigned["blockers"]),
-            len(person_decisions), len(assigned["ambiguous"]),
+            len(assigned["tasks"]),
+            len(assigned["blockers"]),
+            len(decisions),
+            len(assigned["ambiguous"]),
         )
 
     return notifications
 
 
 # ════════════════════════════════════════════════════════
-#  Public send functions
+#  Public API
 # ════════════════════════════════════════════════════════
 
 def notify_meeting(meeting_id: str, dry_run: bool = False) -> dict:
     """
-    Build and send notifications for all owners in a single meeting.
+    Build and optionally send notifications for the selected meeting.
 
     Args:
-        meeting_id: The meeting identifier.
-        dry_run:    If True, builds notifications but does not send them.
-                    Useful for testing email content before sending.
+        meeting_id: The unique meeting identifier.
+        dry_run:    If True, returns recipient list without sending any emails.
 
     Returns:
-        Summary dict: {meeting_id, total, sent, failed, failures, dry_run}
+        {
+            meeting_id:  str,
+            total:       int,
+            sent:        int,
+            failed:      int,
+            failures:    list[str],
+            dry_run:     bool,
+            recipients:  list[{name, email}]
+        }
     """
     logger.info("Building notifications for meeting: %s", meeting_id)
     notifications = build_notifications(meeting_id)
 
+    recipients = [
+        {"name": n["owner_name"], "email": n["to"]}
+        for n in notifications
+    ]
+
+    base = {
+        "meeting_id": meeting_id,
+        "total":      len(notifications),
+        "failures":   [],
+        "dry_run":    dry_run,
+        "recipients": recipients,
+    }
+
     if not notifications:
-        logger.info("No owners found in meeting %s — nothing to send.", meeting_id)
-        return {"meeting_id": meeting_id, "total": 0, "sent": 0, "failed": 0,
-                "failures": [], "dry_run": dry_run}
+        logger.info("No recipients for meeting %s.", meeting_id)
+        return {**base, "sent": 0, "failed": 0}
 
     if dry_run:
         logger.info(
-            "DRY RUN — would send %d emails for meeting %s",
-            len(notifications), meeting_id
+            "DRY RUN — %d emails would be sent for meeting %s",
+            len(notifications), meeting_id,
         )
         for n in notifications:
-            logger.info("  → %s (%s)", n["owner_name"], n["to"])
-        return {
-            "meeting_id": meeting_id,
-            "total":      len(notifications),
-            "sent":       0,
-            "failed":     0,
-            "failures":   [],
-            "dry_run":    True,
-            "recipients": [{"name": n["owner_name"], "email": n["to"]}
-                           for n in notifications],
-        }
+            logger.info("  → %-22s  %s", n["owner_name"], n["to"])
+        return {**base, "sent": 0, "failed": 0}
 
     results = send_bulk(notifications)
-    results["meeting_id"] = meeting_id
-    results["total"]      = len(notifications)
-    results["dry_run"]    = False
-
     logger.info(
-        "Meeting %s — sent: %d, failed: %d",
-        meeting_id, results["sent"], results["failed"]
+        "Meeting %s complete — sent: %d  failed: %d",
+        meeting_id, results["sent"], results["failed"],
     )
     if results["failures"]:
-        logger.warning("Failed recipients: %s", results["failures"])
+        logger.warning("Failed: %s", results["failures"])
 
-    return results
+    return {
+        **base,
+        "sent":     results["sent"],
+        "failed":   results["failed"],
+        "failures": results["failures"],
+    }
 
 
 def notify_all_meetings(dry_run: bool = False) -> list[dict]:
-    """
-    Send notifications for every meeting in the database directory.
-
-    Args:
-        dry_run: If True, builds but does not send.
-
-    Returns:
-        List of result dicts, one per meeting.
-    """
+    """Send notifications for every stored meeting."""
     meetings = list_meeting_dbs()
     if not meetings:
         logger.info("No meetings found.")
         return []
 
-    all_results = []
-    for m in meetings:
-        result = notify_meeting(m["id"], dry_run=dry_run)
-        all_results.append(result)
-
-    total_sent   = sum(r.get("sent", 0)   for r in all_results)
-    total_failed = sum(r.get("failed", 0) for r in all_results)
+    all_results = [notify_meeting(m["id"], dry_run=dry_run) for m in meetings]
     logger.info(
-        "All meetings — total sent: %d, total failed: %d",
-        total_sent, total_failed
+        "All meetings — sent: %d  failed: %d",
+        sum(r.get("sent", 0)   for r in all_results),
+        sum(r.get("failed", 0) for r in all_results),
     )
     return all_results
 
 
 # ════════════════════════════════════════════════════════
-#  CLI entry point
+#  CLI
 # ════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
-        format="%(asctime)s  %(levelname)s  %(message)s"
+        format="%(asctime)s  %(levelname)s  %(message)s",
     )
 
-    args = sys.argv[1:]
-
-    dry = "--dry-run" in args
-    args = [a for a in args if a != "--dry-run"]
+    args    = sys.argv[1:]
+    dry_run = "--dry-run" in args
+    args    = [a for a in args if a != "--dry-run"]
 
     if args:
-        meeting_id = args[0]
-        result     = notify_meeting(meeting_id, dry_run=dry)
-        print(f"\nResult for {meeting_id}:")
-        print(f"  Total recipients : {result['total']}")
-        print(f"  Sent             : {result['sent']}")
-        print(f"  Failed           : {result['failed']}")
-        if result["failures"]:
-            print(f"  Failed addresses : {', '.join(result['failures'])}")
+        result = notify_meeting(args[0], dry_run=dry_run)
+        print(f"\nMeeting : {result['meeting_id']}")
+        print(f"Total   : {result['total']}")
+        print(f"Sent    : {result['sent']}")
+        print(f"Failed  : {result['failed']}")
+        if dry_run:
+            print("\nRecipients:")
+            for r in result.get("recipients", []):
+                print(f"  → {r['name']:<25} {r['email']}")
     else:
-        print("Usage:")
-        print("  python -m app.notifications.notification_engine <meeting_id> [--dry-run]")
-        print("  python -m app.notifications.notification_engine --dry-run   (all meetings)")
-        results = notify_all_meetings(dry_run=dry)
-        for r in results:
+        print("Usage: python -m app.notifications.notification_engine <meeting_id> [--dry-run]")
+        for r in notify_all_meetings(dry_run=dry_run):
             print(f"  {r['meeting_id']}: sent={r['sent']} failed={r['failed']}")
