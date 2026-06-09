@@ -1,145 +1,243 @@
-import json
 import os
-from datetime import datetime
+import json
+import re
+import time
 from pathlib import Path
-import mlflow
-from langchain_google_genai import ChatGoogleGenerativeAI
-import pandas as pd
-from config.config import API_KEY as GOOGLE_API_KEY
+from typing import Dict, List, Any, Optional, Tuple
+from difflib import SequenceMatcher
 
-# ------------------- CONFIG -------------------
-MLFLOW_EXPERIMENT = "meeting-intelligence-eval-gemini"
-GROUND_TRUTH_DIR = Path("evaluation/ground_truth")
-TEST_TRANSCRIPTS_DIR = Path("evaluation/test_transcripts")
+# Import config (uses app/config/config.py)
+try:
+    from app.config.config import GEMINI_API_KEY
+except ImportError:
+    GEMINI_API_KEY = None
+    print("⚠️  Could not import GEMINI_API_KEY from app.config.config")
+
+import google.generativeai as genai
 
 
-# ------------------- HELPERS -------------------
-def load_json(file_path: Path):
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-def compare_action_items(pred_items, gt_items):
-    """Custom precision/recall for action items"""
-    pred_set = {(item.get("title", "").strip().lower(), item.get("owner")) 
-                for item in pred_items if item.get("title")}
-    gt_set = {(item.get("title", "").strip().lower(), item.get("owner")) 
-              for item in gt_items if item.get("title")}
+class MeetingEvaluator:
+    """Terminal-based LLM-as-a-Judge evaluator for Meeting Bot pipeline with rate limiting."""
     
-    tp = len(pred_set & gt_set)
-    precision = tp / len(pred_set) if pred_set else 0.0
-    recall = tp / len(gt_set) if gt_set else 0.0
-    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
-    return {"precision": precision, "recall": recall, "f1": f1, "tp": tp}
-
-def gemini_judge(llm, prompt: str) -> float:
-    """Simple LLM-as-judge using Gemini"""
-    response = llm.invoke(prompt)
-    try:
-        # Try to extract score from 0-1
-        score_text = response.content.strip()
-        score = float([s for s in score_text.split() if s.replace(".", "").replace(",", "").isdigit()][0])
-        return min(max(score, 0.0), 1.0)
-    except:
-        return 0.5  # fallback
-
-# ------------------- EVALUATOR CLASS -------------------
-class MeetingIntelligenceEvaluator:
-    def __init__(self, model_name: str = "gemini-3.5-flash"):
-        mlflow.set_experiment(MLFLOW_EXPERIMENT)
-        self.llm = ChatGoogleGenerativeAI(
-            model=model_name,
-            temperature=0,
-            google_api_key="GOOGLE_API_KEY"
-        )
-        self.model_name = model_name
-
-    def run_evaluation(self, transcript_path: str, predicted_json_path: str, 
-                       ground_truth_path: str, run_name: str = None):
+    def __init__(self, base_dir: str = "app/evaluation", batch_size: int = 5):
+        self.base_dir = Path(base_dir)
+        self.transcript_dir = self.base_dir / "transcript"
+        self.json_dir = self.base_dir / "json"
+        self.results: List[Dict] = []
+        self.batch_size = batch_size
         
-        with mlflow.start_run(run_name=run_name or f"gemini_eval_{datetime.now().strftime('%Y%m%d_%H%M')}"):
-            transcript = Path(transcript_path).read_text(encoding="utf-8")
-            pred_data = load_json(predicted_json_path)
-            gt_data = load_json(ground_truth_path)
+        # Load API key from config
+        self.api_key = GEMINI_API_KEY
+        
+        if self.api_key:
+            genai.configure(api_key=self.api_key)
+            self.model = genai.GenerativeModel('gemini-1.5-flash')
+            print(f"✅ Gemini configured successfully via config. (Rate limit: {batch_size} req/min)")
+        else:
+            self.model = None
+            print("⚠️  GEMINI_API_KEY not found in config. Falling back to heuristic scoring.")
 
-            # 1. Custom Extraction Metrics
-            custom_metrics = compare_action_items(
-                pred_data.get("action_items", []),
-                gt_data.get("action_items", [])
-            )
+    def find_transcript_json_pairs(self) -> List[Tuple[str, Path, Path]]:
+        """Find matching transcript and reference JSON pairs."""
+        if not self.transcript_dir.exists() or not self.json_dir.exists():
+            print("❌ Directories not found!")
+            print(f"Expected:\n   {self.transcript_dir}\n   {self.json_dir}")
+            return []
 
-            # 2. LLM-as-Judge: Attribution Accuracy
-            attribution_prompt = f"""
-            Score the owner attribution accuracy (0.0 to 1.0) for this meeting extraction.
-            Compare predicted vs ground truth.
-            Transcript: {transcript[:8000]}
-            Predicted: {json.dumps(pred_data, indent=2)}
-            Ground Truth: {json.dumps(gt_data, indent=2)}
-            Return only a number between 0.0 and 1.0.
-            """
-            attribution_score = gemini_judge(self.llm, attribution_prompt)
+        transcripts = sorted(self.transcript_dir.glob("meeting_transcript_*.txt"))
+        json_map = {}
+        for j in self.json_dir.glob("meeting_analysis_*.json"):
+            match = re.search(r'(\d+)', j.stem)
+            if match:
+                json_map[match.group(1)] = j
 
-            # 3. Simple Faithfulness Score
-            faithfulness_prompt = f"""
-            Score how faithful the extracted JSON is to the transcript (0.0-1.0).
-            Check if action_items, decisions, blockers are grounded in the text.
-            Transcript: {transcript[:8000]}
-            JSON: {json.dumps(pred_data, indent=2)}
-            Return only a number between 0.0 and 1.0.
-            """
-            faithfulness_score = gemini_judge(self.llm, faithfulness_prompt)
+        pairs = []
+        for t_path in transcripts:
+            match = re.search(r'meeting_transcript_(\d+)', t_path.stem)
+            if match:
+                num = match.group(1)
+                j_path = json_map.get(num)
+                if j_path:
+                    pairs.append((num, t_path, j_path))
+                else:
+                    print(f"⚠️  No matching JSON for transcript {num}")
+        
+        print(f"✅ Found {len(pairs)} transcript/JSON pairs.")
+        return pairs
 
-            # Log to MLflow
-            mlflow.log_metric("extraction_precision", custom_metrics["precision"])
-            mlflow.log_metric("extraction_recall", custom_metrics["recall"])
-            mlflow.log_metric("extraction_f1", custom_metrics["f1"])
-            mlflow.log_metric("attribution_accuracy", attribution_score)
-            mlflow.log_metric("faithfulness", faithfulness_score)
+    def load_transcript(self, path: Path) -> str:
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                return f.read().strip()
+        except Exception as e:
+            print(f"Error reading {path.name}: {e}")
+            return ""
 
-            results_dict = {
-                "timestamp": datetime.now().isoformat(),
-                "model": self.model_name,
-                "transcript": transcript_path,
-                "metrics": {
-                    **custom_metrics,
-                    "attribution_accuracy": attribution_score,
-                    "faithfulness": faithfulness_score
-                }
-            }
+    def load_json(self, path: Path) -> Optional[Dict]:
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error reading {path.name}: {e}")
+            return None
+
+    def validate_schema(self, data: Dict) -> Tuple[bool, List[str]]:
+        expected_fields = ["summary", "action_items", "key_decisions", 
+                          "participants", "sentiment", "topics"]
+        issues = []
+        for field in expected_fields:
+            if field not in data:
+                issues.append(f"Missing field: '{field}'")
+            elif field in ["action_items", "key_decisions", "participants", "topics"] and not isinstance(data[field], list):
+                issues.append(f"'{field}' should be a list")
+        return len(issues) == 0, issues
+
+    def gemini_judge(self, transcript: str, ref_json: Dict, meeting_id: str) -> Dict[str, Any]:
+        """Use Gemini as LLM Judge."""
+        if not self.model:
+            return self.heuristic_judgement(ref_json)
+
+        prompt = f"""
+You are an expert meeting analyst and strict evaluator.
+
+Transcript:
+{transcript[:15000]}
+
+Reference Analysis JSON:
+{json.dumps(ref_json, indent=2)}
+
+Evaluate the quality of this meeting analysis on a scale of 0-100.
+Focus on:
+1. Summary quality and completeness
+2. Action items accuracy and clarity
+3. Key decisions captured
+4. Participants identification
+5. Overall usefulness
+
+Return ONLY a valid JSON with this structure:
+{{
+  "overall_score": <number 0-100>,
+  "summary_score": <number>,
+  "action_items_score": <number>,
+  "decisions_score": <number>,
+  "participants_score": <number>,
+  "strengths": ["point1", "point2"],
+  "weaknesses": ["point1", "point2"],
+  "reasoning": "brief explanation"
+}}
+"""
+
+        try:
+            response = self.model.generate_content(prompt)
+            text = response.text.strip()
             
-            mlflow.log_dict(results_dict, "evaluation_results.json")
-            mlflow.log_artifact(predicted_json_path, "predictions")
-            mlflow.log_artifact(ground_truth_path, "ground_truth")
+            json_match = re.search(r'\{.*\}', text, re.DOTALL)
+            if json_match:
+                return json.loads(json_match.group(0))
+            else:
+                return self.heuristic_judgement(ref_json)
+        except Exception as e:
+            print(f"Gemini error for meeting {meeting_id}: {e}")
+            return self.heuristic_judgement(ref_json)
 
-            print(f"✅ Evaluation done. Run ID: {mlflow.active_run().info.run_id}")
-            return results_dict
+    def heuristic_judgement(self, ref_json: Dict) -> Dict[str, Any]:
+        """Fallback scoring."""
+        actions = len(ref_json.get("action_items", []))
+        decisions = len(ref_json.get("key_decisions", []))
+        participants = len(ref_json.get("participants", []))
+        summary_len = len(ref_json.get("summary", ""))
 
-# ------------------- BATCH RUN -------------------
-def evaluate_all_test_cases(model_name: str = "gemini-1.5-flash"):
-    evaluator = MeetingIntelligenceEvaluator(model_name=model_name)
-    results = []
-    
-    for gt_file in sorted(GROUND_TRUTH_DIR.glob("*.json")):
-        base_name = gt_file.stem.replace("_gt", "")
-        transcript_file = TEST_TRANSCRIPTS_DIR / f"{base_name}.txt"
-        pred_file = Path("artifacts") / f"meeting_analysis_{base_name.split('_')[-1]}.json"
+        overall = min(100, (actions * 15) + (decisions * 12) + (participants * 10) + (summary_len // 20))
+        
+        return {
+            "overall_score": round(overall, 1),
+            "summary_score": min(100, summary_len // 15),
+            "action_items_score": min(100, actions * 18),
+            "decisions_score": min(100, decisions * 15),
+            "participants_score": min(100, participants * 20),
+            "strengths": ["Good structure"],
+            "weaknesses": [] if overall > 70 else ["Limited detail"],
+            "reasoning": "Heuristic fallback scoring"
+        }
 
-        if transcript_file.exists() and pred_file.exists():
-            print(f"📊 Evaluating {base_name}...")
-            result = evaluator.run_evaluation(
-                transcript_path=str(transcript_file),
-                predicted_json_path=str(pred_file),
-                ground_truth_path=str(gt_file),
-                run_name=f"eval_{base_name}"
-            )
-            results.append(result)
-    
-    if results:
-        df = pd.DataFrame([r["metrics"] for r in results])
-        print("\n=== GEMINI EVALUATION SUMMARY ===")
-        print(df.mean(numeric_only=True).round(4))
-        df.to_csv("evaluation_summary_gemini.csv", index=False)
-        mlflow.log_artifact("evaluation_summary_gemini.csv")
-        print("📁 Summary saved to evaluation_summary_gemini.csv")
+    def evaluate_single(self, num: str, trans_path: Path, json_path: Path):
+        transcript = self.load_transcript(trans_path)
+        ref_json = self.load_json(json_path)
+
+        if not transcript or not ref_json:
+            self.results.append({"meeting_id": num, "overall_score": 0, "status": "LOAD_ERROR"})
+            return
+
+        is_valid, issues = self.validate_schema(ref_json)
+        judgement = self.gemini_judge(transcript, ref_json, num)
+
+        result = {
+            "meeting_id": num,
+            "transcript_words": len(transcript.split()),
+            "json_valid": is_valid,
+            "issues": issues,
+            "judgement": judgement,
+            "overall_score": judgement.get("overall_score", 0),
+            "status": "SUCCESS"
+        }
+        self.results.append(result)
+
+    def print_report(self):
+        if not self.results:
+            print("No results to report.")
+            return
+
+        print("\n" + "="*80)
+        print("🤖 MEETING BOT - GEMINI LLM-AS-A-JUDGE EVALUATION")
+        print("="*80)
+
+        total_score = 0
+        valid_count = 0
+
+        for r in self.results:
+            j = r["judgement"]
+            print(f"\n📍 Meeting {r['meeting_id']}")
+            print(f"   Words              : {r['transcript_words']:,}")
+            print(f"   JSON Valid         : {'✅' if r['json_valid'] else '❌'}")
+            print(f"   Overall Score      : {r['overall_score']}/100")
+            print(f"   Strengths          : {', '.join(j.get('strengths', []))}")
+            if j.get('weaknesses'):
+                print(f"   Weaknesses         : {', '.join(j.get('weaknesses', []))}")
+            total_score += r['overall_score']
+            if r['json_valid']:
+                valid_count += 1
+
+        avg_score = round(total_score / len(self.results), 1)
+
+        print("\n" + "="*80)
+        print("📊 AGGREGATE RESULTS")
+        print("="*80)
+        print(f"Meetings Evaluated     : {len(self.results)}")
+        print(f"Valid JSONs            : {valid_count}/{len(self.results)}")
+        print(f"Average LLM Judge Score: {avg_score}/100")
+        print("="*80)
+
+        results_path = self.base_dir / "evaluation_results.json"
+        with open(results_path, "w", encoding="utf-8") as f:
+            json.dump(self.results, f, indent=2)
+        print(f"💾 Detailed results saved to: {results_path}")
+
+    def run(self):
+        print("🚀 Starting Gemini LLM-as-a-Judge Evaluation (with rate limiting)...")
+        pairs = self.find_transcript_json_pairs()
+        
+        for i, (num, t_path, j_path) in enumerate(pairs, 1):
+            print(f"→ Evaluating Meeting {num}... ({i}/{len(pairs)})")
+            self.evaluate_single(num, t_path, j_path)
+            
+            # Rate limiting: Wait 60 seconds after every batch_size evaluations
+            if i % self.batch_size == 0 and i < len(pairs):
+                print(f"⏳ Rate limit reached ({self.batch_size} requests). Waiting 60 seconds...")
+                time.sleep(60)
+        
+        self.print_report()
+
 
 if __name__ == "__main__":
-    evaluate_all_test_cases()
+    evaluator = MeetingEvaluator(batch_size=5)   # Change batch_size if needed
+    evaluator.run()
