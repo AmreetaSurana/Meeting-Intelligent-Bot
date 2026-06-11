@@ -1,0 +1,69 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_10",
+    "date": "2026-06-10",
+    "title": "Product Launch Planning for New App Feature",
+    "attendees": [
+      "Rohan Patel",
+      "Anika Desai",
+      "Karan Malhotra",
+      "Neha Joshi"
+    ]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Coordinate with QA team to complete feature testing",
+      "owner": "Anika Desai",
+      "due_date": null,
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ],
+      "_note": "Testing needs to be completed by next week relative to 2026-06-10"
+    },
+    {
+      "id": "task_002",
+      "title": "Resolve the API integration issue",
+      "owner": "Karan Malhotra",
+      "due_date": null,
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ]
+    },
+    {
+      "id": "task_003",
+      "title": "Prepare launch announcement",
+      "owner": "Anika Desai",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Launch the new feature on 20th June 2026",
+      "rationale": "To launch after final tests are successfully completed",
+      "status": "confirmed",
+      "missing_fields": []
+    }
+  ],
+  "blockers": [
+    {
+      "id": "blk_001",
+      "task": "Coordinate with QA team to complete feature testing (Anika Desai)",
+      "blocked_by": "Dependency on backend team and API integration issue",
+      "owner": "Karan Malhotra",
+      "ticket": null,
+      "missing_fields": []
+    }
+  ],
+  "ambiguous": []
+}

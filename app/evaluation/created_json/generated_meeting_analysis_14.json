@@ -1,0 +1,66 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_10",
+    "date": "2026-06-10",
+    "title": "Internal Audit Findings Review",
+    "attendees": [
+      "Maya Iyer",
+      "Rohit Sen",
+      "Anika Patel",
+      "Devansh Rao"
+    ]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Address compliance gaps in finance",
+      "owner": "Rohit Sen",
+      "due_date": "2026-07-10",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [],
+      "_note": "Rohit's commitment of 'within a month' (2026-07-10) conflicts with Maya's quarter-end directive (2026-06-30)."
+    },
+    {
+      "id": "task_002",
+      "title": "Update procedures based on suggested process improvements",
+      "owner": "Devansh Rao",
+      "due_date": "2026-06-30",
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [],
+      "_note": "Due date aligned with the quarter-end deadline set by Maya."
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "All audit findings must be closed by the end of the current quarter.",
+      "rationale": "To ensure compliance issues and process improvements are resolved in a timely manner.",
+      "status": "confirmed",
+      "missing_fields": [],
+      "_note": "This establishes a final target resolution date of 2026-06-30."
+    }
+  ],
+  "blockers": [],
+  "ambiguous": [
+    {
+      "id": "amb_001",
+      "description": "The specific details of the 'compliance issues in finance' were not elaborated.",
+      "owner": "Rohit Sen",
+      "_note": "Specific findings must be identified from the audit report to address them."
+    },
+    {
+      "id": "amb_002",
+      "description": "The specific 'process improvements' suggested by Anika Patel were not detailed in the meeting.",
+      "owner": "Anika Patel",
+      "_note": "Details of the suggested process improvements are required for Devansh to update the procedures."
+    },
+    {
+      "id": "amb_003",
+      "description": "Timeline discrepancy between Rohit's commitment (by 2026-07-10) and Maya's quarter-end directive (by 2026-06-30).",
+      "owner": "Maya Iyer",
+      "_note": "Need to clarify if Rohit's compliance gap resolution must be accelerated to meet the June 30 deadline."
+    }
+  ]
+}

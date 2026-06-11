@@ -1,0 +1,82 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_10",
+    "date": "2026-06-10",
+    "title": "Team Building Activity Planning",
+    "attendees": [
+      "Sanya Gupta",
+      "Rajesh Kumar",
+      "Meera Nair",
+      "Amit Verma"
+    ]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Book the venue for the team outing",
+      "owner": "Rajesh Kumar",
+      "due_date": "2026-06-17",
+      "priority": "medium",
+      "status": "blocked",
+      "missing_fields": [],
+      "_note": "Blocked by budget approval from finance. Due date resolved to the next Wednesday relative to 2026-06-10."
+    },
+    {
+      "id": "task_002",
+      "title": "Organize transportation for the team outing",
+      "owner": "Meera Nair",
+      "due_date": null,
+      "priority": "medium",
+      "status": "blocked",
+      "missing_fields": [
+        "due_date"
+      ],
+      "_note": "Blocked by budget approval from finance."
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Proceed with the team outing plans only after the budget is approved by finance",
+      "rationale": "Budget needs approval from finance before commitments can be made",
+      "status": "confirmed",
+      "missing_fields": []
+    }
+  ],
+  "blockers": [
+    {
+      "id": "blk_001",
+      "task": "Book the venue (Rajesh Kumar)",
+      "blocked_by": "Budget needs approval from finance",
+      "owner": null,
+      "ticket": null,
+      "missing_fields": [
+        "owner"
+      ]
+    },
+    {
+      "id": "blk_002",
+      "task": "Organize transportation (Meera Nair)",
+      "blocked_by": "Budget needs approval from finance",
+      "owner": null,
+      "ticket": null,
+      "missing_fields": [
+        "owner"
+      ]
+    }
+  ],
+  "ambiguous": [
+    {
+      "id": "amb_001",
+      "description": "The final activity and location of the outing are unresolved; hiking was proposed but not agreed upon.",
+      "owner": null,
+      "_note": "The team needs to select and confirm the final location and activity."
+    },
+    {
+      "id": "amb_002",
+      "description": "Responsibility for submitting and securing budget approval from finance is unassigned.",
+      "owner": null,
+      "_note": "An owner needs to be assigned to follow up with finance."
+    }
+  ]
+}

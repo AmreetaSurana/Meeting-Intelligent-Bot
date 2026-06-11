@@ -1,0 +1,61 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_10",
+    "date": "2026-06-10",
+    "title": "Vendor Contract Negotiation Prep",
+    "attendees": [
+      "Sahil Verma",
+      "Naina Chopra",
+      "Arpit Jain",
+      "Kriti Sharma"
+    ]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "List negotiation points for upcoming vendor negotiations",
+      "owner": "Naina Chopra",
+      "due_date": "2026-06-10",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": []
+    },
+    {
+      "id": "task_002",
+      "title": "Review legal aspects of the contract",
+      "owner": "Kriti Sharma",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Aim for better pricing during negotiations",
+      "rationale": null,
+      "status": "confirmed",
+      "missing_fields": [
+        "rationale"
+      ]
+    }
+  ],
+  "blockers": [],
+  "ambiguous": [
+    {
+      "id": "amb_001",
+      "description": "Arpit Jain noted delivery timelines are critical, but no specific task or owner was assigned to manage this aspect.",
+      "owner": null,
+      "_note": "Need to clarify who will review and verify delivery timelines."
+    },
+    {
+      "id": "amb_002",
+      "description": "Kriti Sharma mentioned a payment terms review, but it was not explicitly assigned as a task with a deadline, though Arpit later asked her to review legal aspects.",
+      "owner": "Kriti Sharma",
+      "_note": "Confirm if payment terms review is bundled under the legal aspects review task."
+    }
+  ]
+}

@@ -1,243 +1,237 @@
-import os
+"""
+evaluation.py
+
+Place this file at:  app/evaluation/evaluation.py
+
+Expected directory layout:
+    app/evaluation/
+        given_json/    meeting_analysis_1.json   ... (reference / ground truth)
+        created_json/  generated_meeting_analysis_1.json ... (pipeline output)
+"""
+
 import json
 import re
 import time
+import sys
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
-from difflib import SequenceMatcher
+from typing import Dict, List, Optional, Tuple
 
-# Import config (uses app/config/config.py)
+# ---------------------------------------------------------------------------
+# Imports from project
+# ---------------------------------------------------------------------------
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from app.config.config import API_KEY, API_MODEL  # noqa: E402
+
+JUDGE_MODEL = API_MODEL
+
 try:
-    from app.config.config import GEMINI_API_KEY
+    from google import genai
+    from google.genai import types
+    judge_client = genai.Client(api_key=API_KEY)
 except ImportError:
-    GEMINI_API_KEY = None
-    print("⚠️  Could not import GEMINI_API_KEY from app.config.config")
-
-import google.generativeai as genai
+    print("❌  google-genai not installed. Run: pip install google-genai")
+    sys.exit(1)
 
 
+# ---------------------------------------------------------------------------
 class MeetingEvaluator:
-    """Terminal-based LLM-as-a-Judge evaluator for Meeting Bot pipeline with rate limiting."""
-    
-    def __init__(self, base_dir: str = "app/evaluation", batch_size: int = 5):
-        self.base_dir = Path(base_dir)
-        self.transcript_dir = self.base_dir / "transcript"
-        self.json_dir = self.base_dir / "json"
+    """Compare generated JSONs (created_json/) against reference JSONs (given_json/)."""
+
+    def __init__(self, base_dir: str = "app/evaluation", batch_size: int = 3):
+        self.base_dir         = Path(base_dir)
+        self.ref_json_dir     = self.base_dir / "given_json"
+        self.created_json_dir = self.base_dir / "created_json"
+
         self.results: List[Dict] = []
         self.batch_size = batch_size
-        
-        # Load API key from config
-        self.api_key = GEMINI_API_KEY
-        
-        if self.api_key:
-            genai.configure(api_key=self.api_key)
-            self.model = genai.GenerativeModel('gemini-1.5-flash')
-            print(f"✅ Gemini configured successfully via config. (Rate limit: {batch_size} req/min)")
-        else:
-            self.model = None
-            print("⚠️  GEMINI_API_KEY not found in config. Falling back to heuristic scoring.")
 
-    def find_transcript_json_pairs(self) -> List[Tuple[str, Path, Path]]:
-        """Find matching transcript and reference JSON pairs."""
-        if not self.transcript_dir.exists() or not self.json_dir.exists():
-            print("❌ Directories not found!")
-            print(f"Expected:\n   {self.transcript_dir}\n   {self.json_dir}")
+    # ------------------------------------------------------------------
+    def find_json_pairs(self) -> List[Tuple[str, Path, Path]]:
+        if not self.ref_json_dir.exists():
+            print(f"❌ Reference JSON directory not found: {self.ref_json_dir.resolve()}")
+            return []
+        if not self.created_json_dir.exists():
+            print(f"❌ Created JSON directory not found: {self.created_json_dir.resolve()}")
             return []
 
-        transcripts = sorted(self.transcript_dir.glob("meeting_transcript_*.txt"))
-        json_map = {}
-        for j in self.json_dir.glob("meeting_analysis_*.json"):
-            match = re.search(r'(\d+)', j.stem)
-            if match:
-                json_map[match.group(1)] = j
+        ref_jsons     = sorted(self.ref_json_dir.glob("*.json"))
+        created_jsons = sorted(self.created_json_dir.glob("*.json"))
+
+        print(f"\n   📂 Reference JSONs ({len(ref_jsons)}):  {[f.name for f in ref_jsons]}")
+        print(f"   📂 Created JSONs   ({len(created_jsons)}):  {[f.name for f in created_jsons]}")
+
+        # Map number → path for each side
+        ref_map: Dict[str, Path] = {}
+        for f in ref_jsons:
+            m = re.search(r"(\d+)", f.stem)
+            if m:
+                ref_map[m.group(1)] = f
+
+        created_map: Dict[str, Path] = {}
+        for f in created_jsons:
+            m = re.search(r"(\d+)", f.stem)
+            if m:
+                created_map[m.group(1)] = f
 
         pairs = []
-        for t_path in transcripts:
-            match = re.search(r'meeting_transcript_(\d+)', t_path.stem)
-            if match:
-                num = match.group(1)
-                j_path = json_map.get(num)
-                if j_path:
-                    pairs.append((num, t_path, j_path))
-                else:
-                    print(f"⚠️  No matching JSON for transcript {num}")
-        
-        print(f"✅ Found {len(pairs)} transcript/JSON pairs.")
+        for num, ref_path in sorted(ref_map.items(), key=lambda x: int(x[0])):
+            if num in created_map:
+                pairs.append((num, created_map[num], ref_path))
+            else:
+                print(f"   ⚠️  No created JSON found for reference meeting {num} — skipping.")
+
+        print(f"\n✅ Matched {len(pairs)} pair(s) for evaluation.")
         return pairs
 
-    def load_transcript(self, path: Path) -> str:
-        try:
-            with open(path, 'r', encoding='utf-8') as f:
-                return f.read().strip()
-        except Exception as e:
-            print(f"Error reading {path.name}: {e}")
-            return ""
-
+    # ------------------------------------------------------------------
     def load_json(self, path: Path) -> Optional[Dict]:
         try:
-            with open(path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+            return json.loads(path.read_text(encoding="utf-8"))
         except Exception as e:
-            print(f"Error reading {path.name}: {e}")
+            print(f"   ❌ Error reading {path.name}: {e}")
             return None
 
-    def validate_schema(self, data: Dict) -> Tuple[bool, List[str]]:
-        expected_fields = ["summary", "action_items", "key_decisions", 
-                          "participants", "sentiment", "topics"]
-        issues = []
-        for field in expected_fields:
-            if field not in data:
-                issues.append(f"Missing field: '{field}'")
-            elif field in ["action_items", "key_decisions", "participants", "topics"] and not isinstance(data[field], list):
-                issues.append(f"'{field}' should be a list")
-        return len(issues) == 0, issues
-
-    def gemini_judge(self, transcript: str, ref_json: Dict, meeting_id: str) -> Dict[str, Any]:
-        """Use Gemini as LLM Judge."""
-        if not self.model:
-            return self.heuristic_judgement(ref_json)
+    # ------------------------------------------------------------------
+    def llm_as_judge(
+        self, generated: Dict, reference: Dict, meeting_id: str
+    ) -> Dict:
+        if not reference:
+            return {"overall_score": 0, "missing_information": ["No reference JSON"]}
 
         prompt = f"""
-You are an expert meeting analyst and strict evaluator.
+You are a strict JSON evaluator.
 
-Transcript:
-{transcript[:15000]}
+Reference JSON (Ground Truth):
+{json.dumps(reference, indent=2)}
 
-Reference Analysis JSON:
-{json.dumps(ref_json, indent=2)}
+Generated JSON:
+{json.dumps(generated, indent=2)}
 
-Evaluate the quality of this meeting analysis on a scale of 0-100.
-Focus on:
-1. Summary quality and completeness
-2. Action items accuracy and clarity
-3. Key decisions captured
-4. Participants identification
-5. Overall usefulness
+Compare them carefully. Identify what important information is missing or incorrect
+in the Generated JSON compared to the Reference.
 
-Return ONLY a valid JSON with this structure:
+Return ONLY valid JSON (no markdown fences, no extra text):
 {{
-  "overall_score": <number 0-100>,
-  "summary_score": <number>,
-  "action_items_score": <number>,
-  "decisions_score": <number>,
-  "participants_score": <number>,
-  "strengths": ["point1", "point2"],
-  "weaknesses": ["point1", "point2"],
-  "reasoning": "brief explanation"
+  "overall_score": <integer 0-100>,
+  "missing_information": ["specific missing item 1", "specific missing item 2"],
+  "strengths": ["good thing 1", "good thing 2"],
+  "weaknesses": ["issue 1", "issue 2"],
+  "reasoning": "brief overall summary"
 }}
 """
-
+        print(f"   ⚖️  Judging meeting {meeting_id} with {JUDGE_MODEL}...")
         try:
-            response = self.model.generate_content(prompt)
-            text = response.text.strip()
-            
-            json_match = re.search(r'\{.*\}', text, re.DOTALL)
-            if json_match:
-                return json.loads(json_match.group(0))
-            else:
-                return self.heuristic_judgement(ref_json)
+            response = judge_client.models.generate_content(
+                model=JUDGE_MODEL,
+                config=types.GenerateContentConfig(
+                    system_instruction="You are a precise evaluator. Always return valid JSON only."
+                ),
+                contents=prompt,
+            )
+            text  = response.text.strip()
+            match = re.search(r"\{.*\}", text, re.DOTALL)
+            if match:
+                return json.loads(match.group(0))
+            raise ValueError("No JSON object found in judge response.")
         except Exception as e:
-            print(f"Gemini error for meeting {meeting_id}: {e}")
-            return self.heuristic_judgement(ref_json)
+            print(f"   ❌ Judge error: {e}")
+            return {
+                "overall_score": 0,
+                "missing_information": [f"Judge call failed: {e}"],
+                "strengths": [],
+                "weaknesses": [],
+                "reasoning": "Judge LLM call failed.",
+            }
 
-    def heuristic_judgement(self, ref_json: Dict) -> Dict[str, Any]:
-        """Fallback scoring."""
-        actions = len(ref_json.get("action_items", []))
-        decisions = len(ref_json.get("key_decisions", []))
-        participants = len(ref_json.get("participants", []))
-        summary_len = len(ref_json.get("summary", ""))
-
-        overall = min(100, (actions * 15) + (decisions * 12) + (participants * 10) + (summary_len // 20))
-        
-        return {
-            "overall_score": round(overall, 1),
-            "summary_score": min(100, summary_len // 15),
-            "action_items_score": min(100, actions * 18),
-            "decisions_score": min(100, decisions * 15),
-            "participants_score": min(100, participants * 20),
-            "strengths": ["Good structure"],
-            "weaknesses": [] if overall > 70 else ["Limited detail"],
-            "reasoning": "Heuristic fallback scoring"
-        }
-
-    def evaluate_single(self, num: str, trans_path: Path, json_path: Path):
-        transcript = self.load_transcript(trans_path)
-        ref_json = self.load_json(json_path)
-
-        if not transcript or not ref_json:
-            self.results.append({"meeting_id": num, "overall_score": 0, "status": "LOAD_ERROR"})
-            return
-
-        is_valid, issues = self.validate_schema(ref_json)
-        judgement = self.gemini_judge(transcript, ref_json, num)
-
-        result = {
-            "meeting_id": num,
-            "transcript_words": len(transcript.split()),
-            "json_valid": is_valid,
-            "issues": issues,
-            "judgement": judgement,
-            "overall_score": judgement.get("overall_score", 0),
-            "status": "SUCCESS"
-        }
-        self.results.append(result)
-
-    def print_report(self):
-        if not self.results:
-            print("No results to report.")
-            return
-
-        print("\n" + "="*80)
-        print("🤖 MEETING BOT - GEMINI LLM-AS-A-JUDGE EVALUATION")
-        print("="*80)
-
-        total_score = 0
-        valid_count = 0
-
-        for r in self.results:
-            j = r["judgement"]
-            print(f"\n📍 Meeting {r['meeting_id']}")
-            print(f"   Words              : {r['transcript_words']:,}")
-            print(f"   JSON Valid         : {'✅' if r['json_valid'] else '❌'}")
-            print(f"   Overall Score      : {r['overall_score']}/100")
-            print(f"   Strengths          : {', '.join(j.get('strengths', []))}")
-            if j.get('weaknesses'):
-                print(f"   Weaknesses         : {', '.join(j.get('weaknesses', []))}")
-            total_score += r['overall_score']
-            if r['json_valid']:
-                valid_count += 1
-
-        avg_score = round(total_score / len(self.results), 1)
-
-        print("\n" + "="*80)
-        print("📊 AGGREGATE RESULTS")
-        print("="*80)
-        print(f"Meetings Evaluated     : {len(self.results)}")
-        print(f"Valid JSONs            : {valid_count}/{len(self.results)}")
-        print(f"Average LLM Judge Score: {avg_score}/100")
-        print("="*80)
-
-        results_path = self.base_dir / "evaluation_results.json"
-        with open(results_path, "w", encoding="utf-8") as f:
-            json.dump(self.results, f, indent=2)
-        print(f"💾 Detailed results saved to: {results_path}")
-
+    # ------------------------------------------------------------------
     def run(self):
-        print("🚀 Starting Gemini LLM-as-a-Judge Evaluation (with rate limiting)...")
-        pairs = self.find_transcript_json_pairs()
-        
-        for i, (num, t_path, j_path) in enumerate(pairs, 1):
-            print(f"→ Evaluating Meeting {num}... ({i}/{len(pairs)})")
-            self.evaluate_single(num, t_path, j_path)
-            
-            # Rate limiting: Wait 60 seconds after every batch_size evaluations
+        print("\n🚀 Starting Evaluation: Created JSON vs Reference JSON")
+        pairs = self.find_json_pairs()
+
+        if not pairs:
+            print("Nothing to evaluate. Exiting.")
+            return
+
+        for i, (num, created_path, ref_path) in enumerate(pairs, 1):
+            print(f"\n{'─'*60}")
+            print(f"→ Meeting {num}  ({i}/{len(pairs)})")
+            print(f"{'─'*60}")
+
+            generated = self.load_json(created_path)
+            reference = self.load_json(ref_path)
+
+            if not generated:
+                print("   ⚠️  Could not load created JSON — skipping.")
+                continue
+
+            comparison = self.llm_as_judge(generated, reference, num)
+
+            self.results.append({
+                "meeting_id":          num,
+                "overall_score":       comparison.get("overall_score", 0),
+                "missing_information": comparison.get("missing_information", []),
+                "strengths":           comparison.get("strengths", []),
+                "weaknesses":          comparison.get("weaknesses", []),
+                "reasoning":           comparison.get("reasoning", ""),
+                "comparison":          comparison,
+            })
+
             if i % self.batch_size == 0 and i < len(pairs):
-                print(f"⏳ Rate limit reached ({self.batch_size} requests). Waiting 60 seconds...")
+                print(f"\n⏳ Rate-limit pause — waiting 60 s before next batch...")
                 time.sleep(60)
-        
+
         self.print_report()
 
+    # ------------------------------------------------------------------
+    def print_report(self):
+        SEP = "=" * 100
+        print(f"\n{SEP}")
+        print("🤖  FINAL EVALUATION REPORT — GENERATED vs REFERENCE")
+        print(SEP)
 
+        total_score = 0
+        for r in self.results:
+            score = r["overall_score"]
+            total_score += score
+            grade = "✅" if score >= 80 else ("⚠️ " if score >= 60 else "❌")
+
+            print(f"\n📍 Meeting {r['meeting_id']}")
+            print(f"   {grade} Overall Score    : {score}/100")
+            print(f"   💬 Reasoning        : {r['reasoning']}")
+
+            if r["strengths"]:
+                print("   ✔  Strengths        :")
+                for s in r["strengths"]:
+                    print(f"        • {s}")
+
+            if r["weaknesses"]:
+                print("   ✘  Weaknesses       :")
+                for w in r["weaknesses"]:
+                    print(f"        • {w}")
+
+            if r["missing_information"]:
+                print("   ⚡ Missing Info      :")
+                for item in r["missing_information"][:10]:
+                    print(f"        – {item}")
+
+        avg = round(total_score / len(self.results), 1) if self.results else 0
+
+        print(f"\n{SEP}")
+        print("📊  AGGREGATE")
+        print(f"   Meetings Evaluated : {len(self.results)}")
+        print(f"   Average Score      : {avg}/100")
+        print(SEP)
+
+        results_file = self.base_dir / "evaluation_results.json"
+        results_file.write_text(
+            json.dumps(self.results, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+        print(f"\n💾 Full results saved → {results_file}\n")
+
+
+# ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    evaluator = MeetingEvaluator(batch_size=5)   # Change batch_size if needed
+    evaluator = MeetingEvaluator(base_dir="app/evaluation", batch_size=3)
     evaluator.run()

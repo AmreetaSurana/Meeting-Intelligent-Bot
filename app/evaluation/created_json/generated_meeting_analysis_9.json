@@ -1,0 +1,46 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_11",
+    "date": "2026-06-11",
+    "title": "Sales Performance Quarterly Review",
+    "attendees": [
+      "Niharika Jain",
+      "Karan Thakur",
+      "Swati Mehra",
+      "Akash Pillai"
+    ]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Analyze regional sales data",
+      "owner": "Karan Thakur",
+      "due_date": "2026-06-16",
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": []
+    },
+    {
+      "id": "task_002",
+      "title": "Design a new incentive program",
+      "owner": "Akash Pillai",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Approved to roll out training sessions",
+      "rationale": "To address underperforming teams as required by Swati Mehra.",
+      "status": "confirmed",
+      "missing_fields": []
+    }
+  ],
+  "blockers": [],
+  "ambiguous": []
+}

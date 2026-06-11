@@ -1,5 +1,4 @@
 deepeval 
-ragas 
 langchain-google-genai 
 mlflow 
 pandas 
@@ -13,4 +12,3 @@ requests
 pandas
 python-dotenv
 streamlit
-sqlite3

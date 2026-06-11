@@ -1,0 +1,55 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_10",
+    "date": "2026-06-10",
+    "title": "Client Feedback Review Session",
+    "attendees": [
+      "Tanya Malhotra",
+      "Siddharth Rao",
+      "Pooja Sen",
+      "Varun Khanna"
+    ]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Compile full feedback report",
+      "owner": "Siddharth Rao",
+      "due_date": "2026-06-10",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": []
+    },
+    {
+      "id": "task_002",
+      "title": "Prototype UI changes",
+      "owner": "Varun Khanna",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Implement the top 3 feedback points",
+      "rationale": null,
+      "status": "confirmed",
+      "missing_fields": [
+        "rationale"
+      ]
+    }
+  ],
+  "blockers": [],
+  "ambiguous": [
+    {
+      "id": "amb_001",
+      "description": "The specific details of the suggested UI improvements and which 'top 3 feedback points' will be selected are not defined.",
+      "owner": null,
+      "_note": "These will likely be determined once Siddharth compiles the full feedback report."
+    }
+  ]
+}

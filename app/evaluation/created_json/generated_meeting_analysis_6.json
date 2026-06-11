@@ -1,0 +1,67 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_11",
+    "date": "2026-06-11",
+    "title": "Software Release Retrospective",
+    "attendees": [
+      "Aditya Nair",
+      "Rhea Kapoor",
+      "Mohit Bansal",
+      "Simran Kaur"
+    ]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Fix the reported bugs in the payment module",
+      "owner": "Rhea Kapoor",
+      "due_date": "2026-06-12",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": []
+    },
+    {
+      "id": "task_002",
+      "title": "Update documentation",
+      "owner": "Simran Kaur",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Better testing will be scheduled in future sprints",
+      "rationale": null,
+      "status": "confirmed",
+      "missing_fields": [
+        "rationale"
+      ]
+    }
+  ],
+  "blockers": [],
+  "ambiguous": [
+    {
+      "id": "amb_001",
+      "description": "Bugs were reported in payment module.",
+      "owner": null,
+      "_note": "Contextual information leading to task_001."
+    },
+    {
+      "id": "amb_002",
+      "description": "Deployment went smooth otherwise.",
+      "owner": null,
+      "_note": null
+    },
+    {
+      "id": "amb_003",
+      "description": "Team performed well under pressure.",
+      "owner": null,
+      "_note": null
+    }
+  ]
+}

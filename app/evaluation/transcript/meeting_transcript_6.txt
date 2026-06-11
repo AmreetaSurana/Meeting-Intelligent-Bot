@@ -1,0 +1,28 @@
+Meeting Title: Software Release Retrospective
+Attendees: Aditya Nair, Rhea Kapoor, Mohit Bansal, Simran Kaur
+Date: 09 June 2026
+Duration: 60 Minutes
+
+00:00:00
+
+Aditya Nair: Let's review the recent software release.
+
+Rhea Kapoor: Bugs were reported in payment module.
+
+Mohit Bansal: Deployment went smooth otherwise.
+
+Simran Kaur: Team performed well under pressure.
+
+00:20:15
+
+Aditya Nair: Rhea to fix the payment bugs.
+
+Rhea Kapoor: By tomorrow.
+
+Mohit Bansal: Simran to update documentation.
+
+00:45:30
+
+Aditya Nair: We'll schedule better testing in future sprints.
+
+Meeting Ended: 01:00:00

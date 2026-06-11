@@ -1,0 +1,80 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_10",
+    "date": "2026-06-10",
+    "title": "Q3 Marketing Campaign Strategy Session",
+    "attendees": [
+      "Priya Mehta",
+      "Arjun Rao",
+      "Sneha Kapoor",
+      "Vikram Singh"
+    ]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Research top social media influencers",
+      "owner": "Arjun Rao",
+      "due_date": "2026-06-12",
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": []
+    },
+    {
+      "id": "task_002",
+      "title": "Prepare the Q3 campaign budget proposal",
+      "owner": "Sneha Kapoor",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ]
+    },
+    {
+      "id": "task_003",
+      "title": "Manage the campaign content calendar",
+      "owner": "Vikram Singh",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ]
+    },
+    {
+      "id": "task_004",
+      "title": "Update the team dashboard",
+      "owner": "Vikram Singh",
+      "due_date": "2026-06-12",
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": []
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Implement a multi-channel approach for the Q3 marketing campaign",
+      "rationale": "To achieve the goal of increasing brand visibility by 30%",
+      "status": "confirmed",
+      "missing_fields": []
+    },
+    {
+      "id": "dec_002",
+      "decision": "Prioritize upgrading the current CRM analytics capabilities",
+      "rationale": "The CRM is working but needs better analytics features",
+      "status": "pending",
+      "missing_fields": []
+    }
+  ],
+  "blockers": [],
+  "ambiguous": [
+    {
+      "id": "amb_001",
+      "description": "Responsibility and plan for upgrading CRM analytics features",
+      "owner": null,
+      "_note": "The team agreed that CRM analytics improvements should be prioritized, but no specific owner or concrete tasks were assigned to resolve this."
+    }
+  ]
+}

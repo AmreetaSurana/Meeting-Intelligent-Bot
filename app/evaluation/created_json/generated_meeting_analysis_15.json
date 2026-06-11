@@ -1,0 +1,56 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_10",
+    "date": "2026-06-10",
+    "title": "Partnership Exploration Call",
+    "attendees": [
+      "Ishaan Kumar",
+      "Sara Ali",
+      "Vivaan Mehta",
+      "Kiara Nair"
+    ]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Prepare partnership proposal",
+      "owner": "Sara Ali",
+      "due_date": "2026-06-12",
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": []
+    },
+    {
+      "id": "task_002",
+      "title": "Consult legal team regarding data sharing concerns",
+      "owner": "Kiara Nair",
+      "due_date": null,
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Proceed with the partnership",
+      "rationale": "There are mutual benefits in the tech stack, but progress is conditional on favorable terms.",
+      "status": "pending",
+      "missing_fields": [],
+      "_note": "The final decision to proceed is contingent on favorable terms from the proposal and clearing legal concerns."
+    }
+  ],
+  "blockers": [
+    {
+      "id": "blk_001",
+      "task": "Proceeding with the partnership agreement",
+      "blocked_by": "Data sharing concerns requiring a legal review",
+      "owner": "Kiara Nair",
+      "ticket": null,
+      "missing_fields": []
+    }
+  ],
+  "ambiguous": []
+}

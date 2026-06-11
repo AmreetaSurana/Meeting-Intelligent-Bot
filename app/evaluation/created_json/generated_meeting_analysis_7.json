@@ -1,0 +1,48 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_11",
+    "date": "2026-06-11",
+    "title": "HR Policy Update Meeting",
+    "attendees": [
+      "Kavya Menon",
+      "Arnav Singh",
+      "Priyanka Das",
+      "Rahul Bose"
+    ]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Draft new remote work policy document",
+      "owner": "Arnav Singh",
+      "due_date": "2026-06-11",
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": []
+    },
+    {
+      "id": "task_002",
+      "title": "Gather employee feedback on remote work policy",
+      "owner": "Rahul Bose",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Implement a hybrid remote work model",
+      "rationale": null,
+      "status": "confirmed",
+      "missing_fields": [
+        "rationale"
+      ]
+    }
+  ],
+  "blockers": [],
+  "ambiguous": []
+}

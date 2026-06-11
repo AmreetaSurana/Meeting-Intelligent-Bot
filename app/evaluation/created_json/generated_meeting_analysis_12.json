@@ -1,0 +1,48 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_10",
+    "date": "2026-06-10",
+    "title": "Innovation Workshop Brainstorming",
+    "attendees": [
+      "Harshita Patel",
+      "Dhruv Malhotra",
+      "Ayesha Khan",
+      "Tejasvi Singh"
+    ]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Prototype AI concept",
+      "owner": "Dhruv Malhotra",
+      "due_date": "2026-06-24",
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": []
+    },
+    {
+      "id": "task_002",
+      "title": "Summarize market research data",
+      "owner": "Tejasvi Singh",
+      "due_date": null,
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "Prioritize sustainable features in new product designs",
+      "rationale": null,
+      "status": "confirmed",
+      "missing_fields": [
+        "rationale"
+      ]
+    }
+  ],
+  "blockers": [],
+  "ambiguous": []
+}

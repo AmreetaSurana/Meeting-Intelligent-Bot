@@ -1,0 +1,69 @@
+{
+  "meeting": {
+    "id": "meet_2026_06_11",
+    "date": "2026-06-11",
+    "title": "Supply Chain Optimization Discussion",
+    "attendees": [
+      "Vikram Reddy",
+      "Anjali Sharma",
+      "Sameer Khan",
+      "Ritu Patel"
+    ]
+  },
+  "action_items": [
+    {
+      "id": "task_001",
+      "title": "Contact new vendors for evaluation",
+      "owner": "Anjali Sharma",
+      "due_date": "2026-06-13",
+      "priority": "high",
+      "status": "open",
+      "missing_fields": []
+    },
+    {
+      "id": "task_002",
+      "title": "Complete cost analysis",
+      "owner": "Ritu Patel",
+      "due_date": null,
+      "priority": "high",
+      "status": "open",
+      "missing_fields": [
+        "due_date"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "dec_001",
+      "decision": "To switch vendors if the cost analysis shows alignment.",
+      "rationale": "To address current supply delays and optimize costs.",
+      "status": "confirmed",
+      "missing_fields": [],
+      "_note": "The actual vendor switch is contingent on the outcome of Ritu's cost analysis."
+    }
+  ],
+  "blockers": [
+    {
+      "id": "blk_001",
+      "task": "Executing the vendor switch (as per dec_001)",
+      "blocked_by": "The cost analysis from Ritu Patel is pending.",
+      "owner": "Ritu Patel",
+      "ticket": null,
+      "missing_fields": []
+    }
+  ],
+  "ambiguous": [
+    {
+      "id": "amb_001",
+      "description": "General statement that 'Current supply delays are affecting production' was mentioned, indicating the primary problem being addressed in the meeting.",
+      "owner": null,
+      "_note": "This is the overarching problem context, not an action item, decision, or blocker itself."
+    },
+    {
+      "id": "amb_002",
+      "description": "Sameer suggested a 'New logistics partner', but no specific action or decision was made regarding this suggestion.",
+      "owner": "Sameer Khan",
+      "_note": "Further discussion is needed to determine if this suggestion should be pursued."
+    }
+  ]
+}
