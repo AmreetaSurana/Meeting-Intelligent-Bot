@@ -1,7 +1,7 @@
 {
   "meeting": {
-    "id": "meet_2026_06_10",
-    "date": "2026-06-10",
+    "id": "meet_2026_06_05",
+    "date": "2026-06-05",
     "title": "Product Launch Planning for New App Feature",
     "attendees": [
       "Rohan Patel",
@@ -13,18 +13,30 @@
   "action_items": [
     {
       "id": "task_001",
-      "title": "Coordinate with QA team to complete feature testing",
+      "title": "Complete testing for the new user authentication feature",
+      "owner": null,
+      "due_date": "2026-06-12",
+      "priority": "medium",
+      "status": "open",
+      "missing_fields": [
+        "owner"
+      ],
+      "_note": null
+    },
+    {
+      "id": "task_002",
+      "title": "Coordinate with QA team",
       "owner": "Anika Desai",
       "due_date": null,
-      "priority": "high",
+      "priority": "medium",
       "status": "open",
       "missing_fields": [
         "due_date"
       ],
-      "_note": "Testing needs to be completed by next week relative to 2026-06-10"
+      "_note": null
     },
     {
-      "id": "task_002",
+      "id": "task_003",
       "title": "Resolve the API integration issue",
       "owner": "Karan Malhotra",
       "due_date": null,
@@ -32,10 +44,11 @@
       "status": "open",
       "missing_fields": [
         "due_date"
-      ]
+      ],
+      "_note": null
     },
     {
-      "id": "task_003",
+      "id": "task_004",
       "title": "Prepare launch announcement",
       "owner": "Anika Desai",
       "due_date": null,
@@ -43,23 +56,35 @@
       "status": "open",
       "missing_fields": [
         "due_date"
-      ]
+      ],
+      "_note": null
     }
   ],
   "decisions": [
     {
       "id": "dec_001",
-      "decision": "Launch the new feature on 20th June 2026",
-      "rationale": "To launch after final tests are successfully completed",
+      "decision": "Launch the new user authentication feature on 20th June",
+      "rationale": null,
       "status": "confirmed",
-      "missing_fields": []
+      "missing_fields": [
+        "rationale"
+      ],
+      "_note": "contingent on final tests"
     }
   ],
   "blockers": [
     {
       "id": "blk_001",
-      "task": "Coordinate with QA team to complete feature testing (Anika Desai)",
-      "blocked_by": "Dependency on backend team and API integration issue",
+      "task": "Completing testing (owner: null)",
+      "blocked_by": "dependency on backend team",
+      "owner": "Karan Malhotra",
+      "ticket": null,
+      "missing_fields": []
+    },
+    {
+      "id": "blk_002",
+      "task": "Launching the new user authentication feature on 20th June (owner: null)",
+      "blocked_by": "dependency on backend team affecting testing completion",
       "owner": "Karan Malhotra",
       "ticket": null,
       "missing_fields": []

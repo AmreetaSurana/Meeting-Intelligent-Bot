@@ -1,7 +1,7 @@
 {
   "meeting": {
-    "id": "meet_2026_06_10",
-    "date": "2026-06-10",
+    "id": "meet_2026_06_07",
+    "date": "2026-06-07",
     "title": "Annual Budget Review Discussion",
     "attendees": [
       "Deepak Sharma",
@@ -15,10 +15,11 @@
       "id": "task_001",
       "title": "Prepare revised budget sheet",
       "owner": "Pranav Iyer",
-      "due_date": "2026-06-12",
-      "priority": "high",
+      "due_date": "2026-06-08",
+      "priority": "medium",
       "status": "open",
-      "missing_fields": []
+      "missing_fields": [],
+      "_note": null
     },
     {
       "id": "task_002",
@@ -29,25 +30,22 @@
       "status": "open",
       "missing_fields": [
         "due_date"
-      ]
+      ],
+      "_note": null
     }
   ],
   "decisions": [
     {
       "id": "dec_001",
       "decision": "Prioritize R&D investment",
-      "rationale": "To optimize the budget by reallocating funds after exceeding training expenses and identifying a need to cut costs in non-essential areas.",
+      "rationale": null,
       "status": "confirmed",
-      "missing_fields": []
+      "missing_fields": [
+        "rationale"
+      ],
+      "_note": null
     }
   ],
   "blockers": [],
-  "ambiguous": [
-    {
-      "id": "amb_001",
-      "description": "Specific non-essential areas for cost-cutting were not identified or defined.",
-      "owner": null,
-      "_note": "The team needs to clarify which non-essential areas will be targeted for budget cuts to support the R&D reallocation."
-    }
-  ]
+  "ambiguous": []
 }

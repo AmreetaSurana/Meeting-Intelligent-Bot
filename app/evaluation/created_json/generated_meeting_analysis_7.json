@@ -1,7 +1,7 @@
 {
   "meeting": {
-    "id": "meet_2026_06_11",
-    "date": "2026-06-11",
+    "id": "meet_2026_06_10",
+    "date": "2026-06-10",
     "title": "HR Policy Update Meeting",
     "attendees": [
       "Kavya Menon",
@@ -13,34 +13,37 @@
   "action_items": [
     {
       "id": "task_001",
-      "title": "Draft new remote work policy document",
+      "title": "Draft new policy document.",
       "owner": "Arnav Singh",
-      "due_date": "2026-06-11",
+      "due_date": "2026-06-10",
       "priority": "medium",
       "status": "open",
-      "missing_fields": []
+      "missing_fields": [],
+      "_note": null
     },
     {
       "id": "task_002",
-      "title": "Gather employee feedback on remote work policy",
+      "title": "Gather employee feedback.",
       "owner": "Rahul Bose",
       "due_date": null,
       "priority": "medium",
       "status": "open",
       "missing_fields": [
         "due_date"
-      ]
+      ],
+      "_note": null
     }
   ],
   "decisions": [
     {
       "id": "dec_001",
-      "decision": "Implement a hybrid remote work model",
+      "decision": "To implement hybrid model.",
       "rationale": null,
       "status": "confirmed",
       "missing_fields": [
         "rationale"
-      ]
+      ],
+      "_note": null
     }
   ],
   "blockers": [],

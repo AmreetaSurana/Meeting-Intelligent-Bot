@@ -1,7 +1,7 @@
 {
   "meeting": {
-    "id": "meet_2026_06_10",
-    "date": "2026-06-10",
+    "id": "meet_2026_06_15",
+    "date": "2026-06-15",
     "title": "Innovation Workshop Brainstorming",
     "attendees": [
       "Harshita Patel",
@@ -15,32 +15,35 @@
       "id": "task_001",
       "title": "Prototype AI concept",
       "owner": "Dhruv Malhotra",
-      "due_date": "2026-06-24",
+      "due_date": "2026-06-29",
       "priority": "medium",
       "status": "open",
-      "missing_fields": []
+      "missing_fields": [],
+      "_note": null
     },
     {
       "id": "task_002",
-      "title": "Summarize market research data",
+      "title": "Summarize research",
       "owner": "Tejasvi Singh",
       "due_date": null,
       "priority": "medium",
       "status": "open",
       "missing_fields": [
         "due_date"
-      ]
+      ],
+      "_note": null
     }
   ],
   "decisions": [
     {
       "id": "dec_001",
-      "decision": "Prioritize sustainable features in new product designs",
+      "decision": "Prioritize sustainable features",
       "rationale": null,
       "status": "confirmed",
       "missing_fields": [
         "rationale"
-      ]
+      ],
+      "_note": null
     }
   ],
   "blockers": [],

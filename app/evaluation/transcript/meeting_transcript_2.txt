@@ -1,0 +1,36 @@
+Meeting Title: Product Launch Planning for New App Feature
+Attendees: Rohan Patel, Anika Desai, Karan Malhotra, Neha Joshi
+Date: 05 June 2026
+Duration: 40 Minutes
+
+00:00:00
+
+Rohan Patel: Good morning everyone. Let's plan the rollout of the new user authentication feature.
+
+Anika Desai: Excited to discuss timelines.
+
+Karan Malhotra: I've reviewed the specs.
+
+Neha Joshi: Ready.
+
+00:05:30
+
+Rohan Patel: We need to complete testing by next week.
+
+Anika Desai: I'll coordinate with QA team.
+
+Karan Malhotra: Potential delay due to dependency on backend team.
+
+00:18:45
+
+Neha Joshi: Let's assign Karan to resolve the API integration issue.
+
+Karan Malhotra: I'll take it.
+
+Rohan Patel: Anika to prepare launch announcement.
+
+00:32:00
+
+Rohan Patel: Decision to launch on 20th June after final tests.
+
+Meeting Ended: 00:40:00

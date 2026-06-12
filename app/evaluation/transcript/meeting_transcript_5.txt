@@ -1,0 +1,28 @@
+Meeting Title: Client Feedback Review Session
+Attendees: Tanya Malhotra, Siddharth Rao, Pooja Sen, Varun Khanna
+Date: 08 June 2026
+Duration: 45 Minutes
+
+00:00:00
+
+Tanya Malhotra: Welcome. Today's focus is client feedback from last project.
+
+Siddharth Rao: Several positive comments on delivery.
+
+Pooja Sen: But UI improvements suggested.
+
+Varun Khanna: We can address that in next iteration.
+
+00:10:25
+
+Tanya Malhotra: Siddharth to compile full feedback report.
+
+Siddharth Rao: Will do today.
+
+Pooja Sen: Varun to prototype UI changes.
+
+00:30:50
+
+Tanya Malhotra: Agreed to implement top 3 feedback points.
+
+Meeting Ended: 00:45:00

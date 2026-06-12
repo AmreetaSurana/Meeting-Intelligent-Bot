@@ -1,0 +1,28 @@
+Meeting Title: Website Redesign Kickoff
+Attendees: Esha Roy, Manav Gupta, Rina Sethi, Yash Khurana
+Date: 13 June 2026
+Duration: 45 Minutes
+
+00:00:00
+
+Esha Roy: Starting the redesign project today.
+
+Manav Gupta: User experience is priority.
+
+Rina Sethi: Mobile responsiveness key.
+
+Yash Khurana: Content migration plan needed.
+
+00:15:20
+
+Esha Roy: Manav to create wireframes.
+
+Manav Gupta: By next Wednesday.
+
+Rina Sethi: Yash to handle content audit.
+
+00:38:00
+
+Esha Roy: Go ahead with modern UI framework.
+
+Meeting Ended: 00:45:00

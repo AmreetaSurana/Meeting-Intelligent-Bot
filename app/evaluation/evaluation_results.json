@@ -1,579 +1,513 @@
 [
   {
     "meeting_id": "1",
-    "overall_score": 65,
+    "overall_score": 70,
     "missing_information": [
-      "Correct meeting date of 2026-06-04 (and corresponding meeting ID)",
-      "Correct priority ('high') for task_001",
-      "Correct due date ('2026-06-11') for task_001",
-      "Correct due date ('2026-06-06') for task_003"
+      "The rationale for dec_001 ('To increase brand visibility by 30%') is missing and was incorrectly marked as a missing field.",
+      "Specific context in the action item titles (such as 'for Q3 campaign', 'for Q3 marketing', and 'with multi-channel campaign details') is omitted.",
+      "Specific details in the decision text ('including social media, ads, and email newsletters') are missing."
     ],
     "strengths": [
-      "Maintains the correct JSON schema",
-      "Successfully matches attendees and general owners of action items",
-      "Captures the main multi-channel decision correctly"
+      "Perfect matching of the overall JSON structure and schemas.",
+      "Meeting metadata (id, date, title, and attendees) is completely accurate.",
+      "Action item owners and statuses are correctly identified."
     ],
     "weaknesses": [
-      "Incorrect meeting date (2026-06-10 instead of 2026-06-04)",
-      "Hallucinated an extra action item (task_003: Manage the campaign content calendar) and split task_003 from reference into task_004",
-      "Hallucinated decision dec_002 (CRM analytics) and ambiguous item amb_001 which are completely absent from the reference data",
-      "Mismatched action item due dates and priorities"
+      "Incorrect due_date for task_001 ('2026-06-05' instead of '2026-06-11').",
+      "Incorrect due_date for task_003 ('2026-06-05' instead of '2026-06-06').",
+      "Incorrect priority for task_001 ('medium' instead of 'high').",
+      "Significantly shortened/truncated titles and decision descriptions compared to the reference."
     ],
-    "reasoning": "The generated JSON correctly identifies key stakeholders and the core decision, but it suffers from severe hallucination by introducing non-existent tasks (CRM analytics, content calendar management) and incorrect dates and priorities across almost all items.",
+    "reasoning": "The generated JSON correctly identifies the structure, meeting details, owners, and statuses. However, it suffers from several accuracy issues, including incorrect due dates, an incorrect priority setting, and missing details/rationales that were fully present in the reference data.",
     "comparison": {
-      "overall_score": 65,
+      "overall_score": 70,
       "missing_information": [
-        "Correct meeting date of 2026-06-04 (and corresponding meeting ID)",
-        "Correct priority ('high') for task_001",
-        "Correct due date ('2026-06-11') for task_001",
-        "Correct due date ('2026-06-06') for task_003"
+        "The rationale for dec_001 ('To increase brand visibility by 30%') is missing and was incorrectly marked as a missing field.",
+        "Specific context in the action item titles (such as 'for Q3 campaign', 'for Q3 marketing', and 'with multi-channel campaign details') is omitted.",
+        "Specific details in the decision text ('including social media, ads, and email newsletters') are missing."
       ],
       "strengths": [
-        "Maintains the correct JSON schema",
-        "Successfully matches attendees and general owners of action items",
-        "Captures the main multi-channel decision correctly"
+        "Perfect matching of the overall JSON structure and schemas.",
+        "Meeting metadata (id, date, title, and attendees) is completely accurate.",
+        "Action item owners and statuses are correctly identified."
       ],
       "weaknesses": [
-        "Incorrect meeting date (2026-06-10 instead of 2026-06-04)",
-        "Hallucinated an extra action item (task_003: Manage the campaign content calendar) and split task_003 from reference into task_004",
-        "Hallucinated decision dec_002 (CRM analytics) and ambiguous item amb_001 which are completely absent from the reference data",
-        "Mismatched action item due dates and priorities"
+        "Incorrect due_date for task_001 ('2026-06-05' instead of '2026-06-11').",
+        "Incorrect due_date for task_003 ('2026-06-05' instead of '2026-06-06').",
+        "Incorrect priority for task_001 ('medium' instead of 'high').",
+        "Significantly shortened/truncated titles and decision descriptions compared to the reference."
       ],
-      "reasoning": "The generated JSON correctly identifies key stakeholders and the core decision, but it suffers from severe hallucination by introducing non-existent tasks (CRM analytics, content calendar management) and incorrect dates and priorities across almost all items."
+      "reasoning": "The generated JSON correctly identifies the structure, meeting details, owners, and statuses. However, it suffers from several accuracy issues, including incorrect due dates, an incorrect priority setting, and missing details/rationales that were fully present in the reference data."
     }
   },
   {
     "meeting_id": "2",
-    "overall_score": 65,
-    "missing_information": [
-      "Correct meeting date '2026-06-05' and ID 'meet_2026_06_05'",
-      "The specific blocker task 'API integration for authentication feature (Karan Malhotra)'",
-      "Specificity in action item titles, such as 'for authentication feature' in task_002 and 'for new feature' in task_003"
-    ],
+    "overall_score": 72,
+    "missing_information": [],
     "strengths": [
-      "Identified the correct list of attendees",
-      "Matched owners and priorities for the action items accurately",
-      "Correctly parsed the general status of action items and decisions"
+      "Successfully captured the meeting metadata (ID, date, title, and attendees).",
+      "Extracted the correct primary action items, decision, and blocker core topics."
     ],
     "weaknesses": [
-      "The meeting date and ID are incorrect (June 10th instead of June 5th)",
-      "The blocker object contains incorrect data: the task is wrong, the blocked_by dependency is altered, and an owner is hallucinated instead of being null",
-      "The decision rationale is hallucinated ('To launch after final tests are successfully completed'), which incorrectly resolved the 'missing_fields' for the decision"
+      "Hallucinated an extra action item: 'Complete testing for the new user authentication feature'.",
+      "Hallucinated an extra blocker: 'blk_002' regarding launching the feature.",
+      "Incorrect priority for 'Coordinate with QA team' action item (set to 'medium' instead of 'high').",
+      "Incorrectly populated the owner field for blocker 'blk_001' with 'Karan Malhotra' (should be null) and missed adding 'owner' to 'missing_fields'.",
+      "Added a non-null '_note' in decision 'dec_001' which should be null."
     ],
-    "reasoning": "The generated JSON correctly identifies key personnel and basic action item assignments, but suffers from significant hallucinations and incorrect data. Specifically, the meeting date is incorrect, the blocker task and owner are mismatched, and decision rationale is hallucinated.",
+    "reasoning": "The generated JSON correctly identifies the key structure and general content of the meeting minutes, but it suffers from several hallucinations, including an extra action item and an extra blocker, as well as metadata discrepancies (such as priority levels, notes, and missing field arrays).",
     "comparison": {
-      "overall_score": 65,
-      "missing_information": [
-        "Correct meeting date '2026-06-05' and ID 'meet_2026_06_05'",
-        "The specific blocker task 'API integration for authentication feature (Karan Malhotra)'",
-        "Specificity in action item titles, such as 'for authentication feature' in task_002 and 'for new feature' in task_003"
-      ],
+      "overall_score": 72,
+      "missing_information": [],
       "strengths": [
-        "Identified the correct list of attendees",
-        "Matched owners and priorities for the action items accurately",
-        "Correctly parsed the general status of action items and decisions"
+        "Successfully captured the meeting metadata (ID, date, title, and attendees).",
+        "Extracted the correct primary action items, decision, and blocker core topics."
       ],
       "weaknesses": [
-        "The meeting date and ID are incorrect (June 10th instead of June 5th)",
-        "The blocker object contains incorrect data: the task is wrong, the blocked_by dependency is altered, and an owner is hallucinated instead of being null",
-        "The decision rationale is hallucinated ('To launch after final tests are successfully completed'), which incorrectly resolved the 'missing_fields' for the decision"
+        "Hallucinated an extra action item: 'Complete testing for the new user authentication feature'.",
+        "Hallucinated an extra blocker: 'blk_002' regarding launching the feature.",
+        "Incorrect priority for 'Coordinate with QA team' action item (set to 'medium' instead of 'high').",
+        "Incorrectly populated the owner field for blocker 'blk_001' with 'Karan Malhotra' (should be null) and missed adding 'owner' to 'missing_fields'.",
+        "Added a non-null '_note' in decision 'dec_001' which should be null."
       ],
-      "reasoning": "The generated JSON correctly identifies key personnel and basic action item assignments, but suffers from significant hallucinations and incorrect data. Specifically, the meeting date is incorrect, the blocker task and owner are mismatched, and decision rationale is hallucinated."
+      "reasoning": "The generated JSON correctly identifies the key structure and general content of the meeting minutes, but it suffers from several hallucinations, including an extra action item and an extra blocker, as well as metadata discrepancies (such as priority levels, notes, and missing field arrays)."
     }
   },
   {
     "meeting_id": "3",
-    "overall_score": 55,
+    "overall_score": 60,
     "missing_information": [],
     "strengths": [
-      "Correctly identified all attendees and action item owners",
-      "Maintained the overall JSON structure and schema"
+      "Meeting details (id, date, title, attendees) are correctly matched.",
+      "Action item owners, priorities, and missing fields are correctly identified."
     ],
     "weaknesses": [
-      "Incorrect meeting ID and date (2026-06-10 instead of 2026-06-06)",
-      "Incorrect due date for task_001 (2026-06-17 instead of 2026-06-10)",
-      "Incorrect status for both action items ('blocked' instead of 'open')",
-      "Hallucinated extra decisions, blockers, and ambiguous elements not present in the reference ground truth"
+      "Action item task_001 has an incorrect due_date ('2026-06-11' instead of '2026-06-10').",
+      "Action items have incorrect status ('blocked' instead of 'open').",
+      "Extraneous decision 'dec_001' was generated which is not present in the Reference.",
+      "Extraneous blockers 'blk_002' and 'blk_003' were added.",
+      "The action item titles are simplified and less descriptive than the Reference."
     ],
-    "reasoning": "The generated JSON contains several critical inaccuracies, including incorrect dates for the meeting and action items, and incorrect statuses. It also hallucinated extra decisions, ambiguous items, and a blocker that were not part of the reference data.",
+    "reasoning": "The generated JSON captures the basic structure and meeting details correctly, but introduces several critical errors including incorrect dates and statuses for action items, and multiple hallucinated decisions and blockers not present in the reference data.",
     "comparison": {
-      "overall_score": 55,
+      "overall_score": 60,
       "missing_information": [],
       "strengths": [
-        "Correctly identified all attendees and action item owners",
-        "Maintained the overall JSON structure and schema"
+        "Meeting details (id, date, title, attendees) are correctly matched.",
+        "Action item owners, priorities, and missing fields are correctly identified."
       ],
       "weaknesses": [
-        "Incorrect meeting ID and date (2026-06-10 instead of 2026-06-06)",
-        "Incorrect due date for task_001 (2026-06-17 instead of 2026-06-10)",
-        "Incorrect status for both action items ('blocked' instead of 'open')",
-        "Hallucinated extra decisions, blockers, and ambiguous elements not present in the reference ground truth"
+        "Action item task_001 has an incorrect due_date ('2026-06-11' instead of '2026-06-10').",
+        "Action items have incorrect status ('blocked' instead of 'open').",
+        "Extraneous decision 'dec_001' was generated which is not present in the Reference.",
+        "Extraneous blockers 'blk_002' and 'blk_003' were added.",
+        "The action item titles are simplified and less descriptive than the Reference."
       ],
-      "reasoning": "The generated JSON contains several critical inaccuracies, including incorrect dates for the meeting and action items, and incorrect statuses. It also hallucinated extra decisions, ambiguous items, and a blocker that were not part of the reference data."
+      "reasoning": "The generated JSON captures the basic structure and meeting details correctly, but introduces several critical errors including incorrect dates and statuses for action items, and multiple hallucinated decisions and blockers not present in the reference data."
     }
   },
   {
     "meeting_id": "4",
-    "overall_score": 65,
+    "overall_score": 75,
     "missing_information": [
-      "The '_note' field is missing from the action_items and decisions arrays in the Generated JSON."
+      "In task_001, the specific detail 'with cost cuts' is missing from the title.",
+      "In dec_001, 'in the budget' is missing from the decision text."
     ],
     "strengths": [
-      "Successfully captured the core structure of the meeting, including attendees and the main action items.",
-      "Correctly identified most of the status values and missing fields (e.g., due_date for task_002)."
+      "Perfect structure alignment with the reference JSON.",
+      "Correctly matched all IDs (meeting, tasks, decisions).",
+      "Correctly identified missing fields for due_date in task_002 and rationale in dec_001."
     ],
     "weaknesses": [
-      "The meeting date and ID are incorrect (2026-06-10 vs 2026-06-07).",
-      "Action item task_001 has the wrong due date (2026-06-12 instead of 2026-06-13).",
-      "Action item task_002 has the incorrect priority ('medium' instead of 'high') and a mismatched title.",
-      "Decision 'dec_001' contains a hallucinated rationale, which changed 'missing_fields' to empty when 'rationale' was expected to be missing.",
-      "An extra 'ambiguous' item was generated which is not present in the reference ground truth."
+      "Incorrect due_date for task_001 ('2026-06-08' instead of '2026-06-13').",
+      "Incorrect priority level for both task_001 and task_002 ('medium' instead of 'high').",
+      "Inaccurate title for task_002 ('Present revised budget to leadership' instead of 'Present reallocation proposal to leadership')."
     ],
-    "reasoning": "The generated JSON has several critical data mismatches including incorrect dates, altered priorities, truncated titles, a hallucinated rationale, and an extra ambiguous item. It also failed to maintain schema consistency by omitting the '_note' fields.",
+    "reasoning": "The generated JSON successfully replicates the schema, IDs, and general structure of the reference JSON. However, it contains multiple accuracy errors in critical fields, including incorrect priority levels for both action items, an incorrect due date for task_001, and modified titles/descriptions for the action items and decisions.",
     "comparison": {
-      "overall_score": 65,
+      "overall_score": 75,
       "missing_information": [
-        "The '_note' field is missing from the action_items and decisions arrays in the Generated JSON."
+        "In task_001, the specific detail 'with cost cuts' is missing from the title.",
+        "In dec_001, 'in the budget' is missing from the decision text."
       ],
       "strengths": [
-        "Successfully captured the core structure of the meeting, including attendees and the main action items.",
-        "Correctly identified most of the status values and missing fields (e.g., due_date for task_002)."
+        "Perfect structure alignment with the reference JSON.",
+        "Correctly matched all IDs (meeting, tasks, decisions).",
+        "Correctly identified missing fields for due_date in task_002 and rationale in dec_001."
       ],
       "weaknesses": [
-        "The meeting date and ID are incorrect (2026-06-10 vs 2026-06-07).",
-        "Action item task_001 has the wrong due date (2026-06-12 instead of 2026-06-13).",
-        "Action item task_002 has the incorrect priority ('medium' instead of 'high') and a mismatched title.",
-        "Decision 'dec_001' contains a hallucinated rationale, which changed 'missing_fields' to empty when 'rationale' was expected to be missing.",
-        "An extra 'ambiguous' item was generated which is not present in the reference ground truth."
+        "Incorrect due_date for task_001 ('2026-06-08' instead of '2026-06-13').",
+        "Incorrect priority level for both task_001 and task_002 ('medium' instead of 'high').",
+        "Inaccurate title for task_002 ('Present revised budget to leadership' instead of 'Present reallocation proposal to leadership')."
       ],
-      "reasoning": "The generated JSON has several critical data mismatches including incorrect dates, altered priorities, truncated titles, a hallucinated rationale, and an extra ambiguous item. It also failed to maintain schema consistency by omitting the '_note' fields."
+      "reasoning": "The generated JSON successfully replicates the schema, IDs, and general structure of the reference JSON. However, it contains multiple accuracy errors in critical fields, including incorrect priority levels for both action items, an incorrect due date for task_001, and modified titles/descriptions for the action items and decisions."
     }
   },
   {
     "meeting_id": "5",
-    "overall_score": 75,
-    "missing_information": [
-      "The '_note' field is missing from action_items and decisions objects."
-    ],
+    "overall_score": 88,
+    "missing_information": [],
     "strengths": [
-      "Correctly identified meeting attendees.",
-      "Correctly mapped task owners, priorities, statuses, and missing_fields in action items."
+      "Perfect schema and structural matching",
+      "Correctly mapped all IDs, dates, owners, and statuses",
+      "Successfully identified missing fields and null attributes according to reference"
     ],
     "weaknesses": [
-      "Incorrect meeting date and meeting ID ('2026-06-10' instead of '2026-06-08').",
-      "Incorrect due_date for task_001 ('2026-06-10' instead of '2026-06-08').",
-      "Hallucinated an entry in the 'ambiguous' array which should have been empty.",
-      "Omission of '_note' fields across multiple objects.",
-      "Slightly altered wording in titles and decisions compared to the reference."
+      "Incorrect priority for task_001 (marked as 'medium' instead of 'high')",
+      "Slightly abbreviated text fields compared to reference (e.g., 'Compile full feedback report' instead of 'Compile full client feedback report')"
     ],
-    "reasoning": "The generated JSON has a few critical date discrepancies (using June 10th instead of June 8th), missed the '_note' keys in the schema, and hallucinated an ambiguous item that was not in the reference. However, it maintained the general schema structure and correctly identified attendees, owners, and priorities.",
+    "reasoning": "The generated JSON is highly accurate in terms of structure and metadata. It has one critical metadata error where the priority of task_001 is incorrect, and some of the text descriptions are slightly summarized compared to the reference.",
     "comparison": {
-      "overall_score": 75,
-      "missing_information": [
-        "The '_note' field is missing from action_items and decisions objects."
-      ],
+      "overall_score": 88,
+      "missing_information": [],
       "strengths": [
-        "Correctly identified meeting attendees.",
-        "Correctly mapped task owners, priorities, statuses, and missing_fields in action items."
+        "Perfect schema and structural matching",
+        "Correctly mapped all IDs, dates, owners, and statuses",
+        "Successfully identified missing fields and null attributes according to reference"
       ],
       "weaknesses": [
-        "Incorrect meeting date and meeting ID ('2026-06-10' instead of '2026-06-08').",
-        "Incorrect due_date for task_001 ('2026-06-10' instead of '2026-06-08').",
-        "Hallucinated an entry in the 'ambiguous' array which should have been empty.",
-        "Omission of '_note' fields across multiple objects.",
-        "Slightly altered wording in titles and decisions compared to the reference."
+        "Incorrect priority for task_001 (marked as 'medium' instead of 'high')",
+        "Slightly abbreviated text fields compared to reference (e.g., 'Compile full feedback report' instead of 'Compile full client feedback report')"
       ],
-      "reasoning": "The generated JSON has a few critical date discrepancies (using June 10th instead of June 8th), missed the '_note' keys in the schema, and hallucinated an ambiguous item that was not in the reference. However, it maintained the general schema structure and correctly identified attendees, owners, and priorities."
+      "reasoning": "The generated JSON is highly accurate in terms of structure and metadata. It has one critical metadata error where the priority of task_001 is incorrect, and some of the text descriptions are slightly summarized compared to the reference."
     }
   },
   {
     "meeting_id": "6",
-    "overall_score": 75,
-    "missing_information": [
-      "Correct meeting date '2026-06-09' (generated '2026-06-11')",
-      "Correct due date '2026-06-10' for task_001 (generated '2026-06-12')",
-      "The '_note' fields within action items and decisions (though null in the reference, they are missing from the generated schema)"
-    ],
+    "overall_score": 92,
+    "missing_information": [],
     "strengths": [
-      "Successfully captured all key attendees, action items, and decisions.",
-      "Correctly mapped statuses, priorities, and missing_fields for both tasks and decisions."
+      "Perfect match of meeting metadata and attendees.",
+      "Correct mapping of task IDs, owners, statuses, and missing fields arrays.",
+      "Structure matches the reference JSON completely."
     ],
     "weaknesses": [
-      "Incorrect dates used for meeting.id, meeting.date, and task_001's due_date.",
-      "Hallucinated three entries in the 'ambiguous' array which should have been empty.",
-      "Slightly altered titles/decisions text compared to reference text."
+      "The priority of task_001 was set to 'medium' instead of 'high'.",
+      "Titles of action items and decisions are slightly summarized compared to the reference (e.g., 'Fix the payment bugs' instead of 'Fix bugs in payment module')."
     ],
-    "reasoning": "The generated JSON successfully identifies the core structure and entities. However, it introduces incorrect dates for both the meeting and the first task, omits the '_note' fields from the schema, and hallucinates several ambiguous items that were not present in the reference.",
+    "reasoning": "The generated JSON is highly accurate and retains the proper schema structure, IDs, and metadata. The only notable error is the incorrect priority level ('medium' instead of 'high') for task_001, alongside minor wording simplifications in the text fields.",
     "comparison": {
-      "overall_score": 75,
-      "missing_information": [
-        "Correct meeting date '2026-06-09' (generated '2026-06-11')",
-        "Correct due date '2026-06-10' for task_001 (generated '2026-06-12')",
-        "The '_note' fields within action items and decisions (though null in the reference, they are missing from the generated schema)"
-      ],
+      "overall_score": 92,
+      "missing_information": [],
       "strengths": [
-        "Successfully captured all key attendees, action items, and decisions.",
-        "Correctly mapped statuses, priorities, and missing_fields for both tasks and decisions."
+        "Perfect match of meeting metadata and attendees.",
+        "Correct mapping of task IDs, owners, statuses, and missing fields arrays.",
+        "Structure matches the reference JSON completely."
       ],
       "weaknesses": [
-        "Incorrect dates used for meeting.id, meeting.date, and task_001's due_date.",
-        "Hallucinated three entries in the 'ambiguous' array which should have been empty.",
-        "Slightly altered titles/decisions text compared to reference text."
+        "The priority of task_001 was set to 'medium' instead of 'high'.",
+        "Titles of action items and decisions are slightly summarized compared to the reference (e.g., 'Fix the payment bugs' instead of 'Fix bugs in payment module')."
       ],
-      "reasoning": "The generated JSON successfully identifies the core structure and entities. However, it introduces incorrect dates for both the meeting and the first task, omits the '_note' fields from the schema, and hallucinates several ambiguous items that were not present in the reference."
+      "reasoning": "The generated JSON is highly accurate and retains the proper schema structure, IDs, and metadata. The only notable error is the incorrect priority level ('medium' instead of 'high') for task_001, alongside minor wording simplifications in the text fields."
     }
   },
   {
     "meeting_id": "7",
-    "overall_score": 80,
+    "overall_score": 90,
     "missing_information": [
-      "The '_note' fields are missing from the action items and decisions arrays."
+      "Specific context 'remote work' in the title of task_001",
+      "Specific context 'on policy changes' in the title of task_002"
     ],
     "strengths": [
-      "Correctly captured the attendees list and most structural fields.",
-      "Correctly identified missing fields such as 'due_date' and 'rationale' in respective objects."
+      "Perfect schema matching and structural alignment with the reference JSON",
+      "Accurately populated IDs, meeting details, and status values",
+      "Correct identification of missing_fields arrays for tasks and decisions"
     ],
     "weaknesses": [
-      "Incorrect meeting date ('2026-06-11' instead of '2026-06-10') and ID mismatch.",
-      "Incorrect due date for task_001 ('2026-06-11' instead of '2026-06-10').",
-      "Incorrect priority for task_001 ('medium' instead of 'high').",
-      "Minor wording differences in task_002 title and dec_001 decision text.",
-      "Omission of the '_note' key in action items and decisions objects."
+      "Incorrect priority for task_001 (marked as 'medium' instead of 'high')",
+      "Simplified and slightly truncated text descriptions for action items and decisions"
     ],
-    "reasoning": "The generated JSON has several data accuracy issues: the date is shifted by one day throughout the document, task_001's priority is incorrect, and the '_note' key is missing from multiple objects. However, the schema structure and most content remain close to the reference.",
+    "reasoning": "The generated JSON is structurally excellent and captures all metadata correctly. However, it loses point-accuracy on the priority level of task_001 and slightly paraphrases/truncates the textual descriptions of the tasks and decisions, reducing specific detail.",
     "comparison": {
-      "overall_score": 80,
+      "overall_score": 90,
       "missing_information": [
-        "The '_note' fields are missing from the action items and decisions arrays."
+        "Specific context 'remote work' in the title of task_001",
+        "Specific context 'on policy changes' in the title of task_002"
       ],
       "strengths": [
-        "Correctly captured the attendees list and most structural fields.",
-        "Correctly identified missing fields such as 'due_date' and 'rationale' in respective objects."
+        "Perfect schema matching and structural alignment with the reference JSON",
+        "Accurately populated IDs, meeting details, and status values",
+        "Correct identification of missing_fields arrays for tasks and decisions"
       ],
       "weaknesses": [
-        "Incorrect meeting date ('2026-06-11' instead of '2026-06-10') and ID mismatch.",
-        "Incorrect due date for task_001 ('2026-06-11' instead of '2026-06-10').",
-        "Incorrect priority for task_001 ('medium' instead of 'high').",
-        "Minor wording differences in task_002 title and dec_001 decision text.",
-        "Omission of the '_note' key in action items and decisions objects."
+        "Incorrect priority for task_001 (marked as 'medium' instead of 'high')",
+        "Simplified and slightly truncated text descriptions for action items and decisions"
       ],
-      "reasoning": "The generated JSON has several data accuracy issues: the date is shifted by one day throughout the document, task_001's priority is incorrect, and the '_note' key is missing from multiple objects. However, the schema structure and most content remain close to the reference."
+      "reasoning": "The generated JSON is structurally excellent and captures all metadata correctly. However, it loses point-accuracy on the priority level of task_001 and slightly paraphrases/truncates the textual descriptions of the tasks and decisions, reducing specific detail."
     }
   },
   {
     "meeting_id": "8",
-    "overall_score": 75,
+    "overall_score": 78,
     "missing_information": [
-      "The '_note' fields are missing within the action_items objects."
+      "Correct due date for task_001 (should be '2026-06-13' instead of '2026-06-12')",
+      "Correct priority for task_001 and task_002 (should be 'high' instead of 'medium')",
+      "Correct status for decision dec_001 (should be 'pending' instead of 'confirmed')",
+      "Full details in action item titles ('and evaluate' / 'for supply chain' and 'for logistics options')"
     ],
     "strengths": [
-      "Core meeting details (id, date, title, attendees) match the reference perfectly.",
-      "Action items are captured with correct owners, due dates, and priorities."
+      "Perfect matching of the meeting metadata block (ID, title, date, attendees).",
+      "Correctly mapped task owners and identified missing fields (like due_date and rationale).",
+      "Properly identified the conditional nature of the decision."
     ],
     "weaknesses": [
-      "Incorrectly set status of 'dec_001' as 'confirmed' instead of 'pending'.",
-      "Hallucinated 'rationale' for 'dec_001' and falsely marked 'missing_fields' as empty.",
-      "Added unauthorized/hallucinated items under 'blockers' and 'ambiguous' which should be empty according to the Reference."
+      "Inaccurate priority assignments for both action items.",
+      "Incorrect due date for the first action item.",
+      "Incorrect status for the decision ('confirmed' instead of 'pending').",
+      "Slightly over-simplified action item titles."
     ],
-    "reasoning": "The generated JSON captures the primary meeting details and action items correctly. However, it fails on strict compliance by hallucinating elements in the 'blockers' and 'ambiguous' arrays, inventing a rationale for a decision, and changing the decision status from 'pending' to 'confirmed'.",
+    "reasoning": "The generated JSON successfully replicates the structure and correctly captures the overall contents. However, it fails on precision regarding critical metadata, such as priority levels, a task due date, and the decision status, which was incorrectly marked as 'confirmed' instead of 'pending'.",
     "comparison": {
-      "overall_score": 75,
+      "overall_score": 78,
       "missing_information": [
-        "The '_note' fields are missing within the action_items objects."
+        "Correct due date for task_001 (should be '2026-06-13' instead of '2026-06-12')",
+        "Correct priority for task_001 and task_002 (should be 'high' instead of 'medium')",
+        "Correct status for decision dec_001 (should be 'pending' instead of 'confirmed')",
+        "Full details in action item titles ('and evaluate' / 'for supply chain' and 'for logistics options')"
       ],
       "strengths": [
-        "Core meeting details (id, date, title, attendees) match the reference perfectly.",
-        "Action items are captured with correct owners, due dates, and priorities."
+        "Perfect matching of the meeting metadata block (ID, title, date, attendees).",
+        "Correctly mapped task owners and identified missing fields (like due_date and rationale).",
+        "Properly identified the conditional nature of the decision."
       ],
       "weaknesses": [
-        "Incorrectly set status of 'dec_001' as 'confirmed' instead of 'pending'.",
-        "Hallucinated 'rationale' for 'dec_001' and falsely marked 'missing_fields' as empty.",
-        "Added unauthorized/hallucinated items under 'blockers' and 'ambiguous' which should be empty according to the Reference."
+        "Inaccurate priority assignments for both action items.",
+        "Incorrect due date for the first action item.",
+        "Incorrect status for the decision ('confirmed' instead of 'pending').",
+        "Slightly over-simplified action item titles."
       ],
-      "reasoning": "The generated JSON captures the primary meeting details and action items correctly. However, it fails on strict compliance by hallucinating elements in the 'blockers' and 'ambiguous' arrays, inventing a rationale for a decision, and changing the decision status from 'pending' to 'confirmed'."
+      "reasoning": "The generated JSON successfully replicates the structure and correctly captures the overall contents. However, it fails on precision regarding critical metadata, such as priority levels, a task due date, and the decision status, which was incorrectly marked as 'confirmed' instead of 'pending'."
     }
   },
   {
     "meeting_id": "9",
-    "overall_score": 75,
-    "missing_information": [
-      "Correct meeting date (2026-06-12) and corresponding meeting ID.",
-      "Correct due date (2026-06-15) and priority ('high') for task_001.",
-      "_note_ fields inside action_items and decisions."
-    ],
+    "overall_score": 88,
+    "missing_information": [],
     "strengths": [
-      "Successfully extracted all attendee names and meeting title.",
-      "Correctly identified structure, statuses, and owners for action items."
+      "Perfect match of the meeting details and attendees.",
+      "Correctly matched structural fields, IDs, owners, statuses, and missing fields arrays.",
+      "Successfully identified the correct number of action items, decisions, blockers, and ambiguous items."
     ],
     "weaknesses": [
-      "Incorrect meeting date ('2026-06-11' instead of '2026-06-12') and meeting ID.",
-      "Incorrect due date and priority for task_001.",
-      "Hallucinated a rationale for decision 'dec_001' ('To address underperforming teams...') when it should have been null, resulting in an incorrect 'missing_fields' array."
+      "In task_001, the priority is incorrectly marked as 'medium' instead of 'high'.",
+      "In task_001, the title is truncated ('Analyze regional data' instead of 'Analyze regional sales data variations').",
+      "In task_002, the title is slightly shortened ('Design new incentive program' instead of 'Design new incentive program for sales team').",
+      "In dec_001, the decision text is slightly paraphrased compared to the reference."
     ],
-    "reasoning": "The generated JSON captures all high-level entities correctly (attendees, tasks, decisions), but introduces several inaccuracies including incorrect dates, incorrect priority, and a hallucinated rationale for a decision.",
+    "reasoning": "The generated JSON is very close to the reference, preserving the schema and most data points correctly. However, it has a priority discrepancy (medium vs high) in the first action item and contains slightly shortened/paraphrased titles and descriptions.",
     "comparison": {
-      "overall_score": 75,
-      "missing_information": [
-        "Correct meeting date (2026-06-12) and corresponding meeting ID.",
-        "Correct due date (2026-06-15) and priority ('high') for task_001.",
-        "_note_ fields inside action_items and decisions."
-      ],
+      "overall_score": 88,
+      "missing_information": [],
       "strengths": [
-        "Successfully extracted all attendee names and meeting title.",
-        "Correctly identified structure, statuses, and owners for action items."
+        "Perfect match of the meeting details and attendees.",
+        "Correctly matched structural fields, IDs, owners, statuses, and missing fields arrays.",
+        "Successfully identified the correct number of action items, decisions, blockers, and ambiguous items."
       ],
       "weaknesses": [
-        "Incorrect meeting date ('2026-06-11' instead of '2026-06-12') and meeting ID.",
-        "Incorrect due date and priority for task_001.",
-        "Hallucinated a rationale for decision 'dec_001' ('To address underperforming teams...') when it should have been null, resulting in an incorrect 'missing_fields' array."
+        "In task_001, the priority is incorrectly marked as 'medium' instead of 'high'.",
+        "In task_001, the title is truncated ('Analyze regional data' instead of 'Analyze regional sales data variations').",
+        "In task_002, the title is slightly shortened ('Design new incentive program' instead of 'Design new incentive program for sales team').",
+        "In dec_001, the decision text is slightly paraphrased compared to the reference."
       ],
-      "reasoning": "The generated JSON captures all high-level entities correctly (attendees, tasks, decisions), but introduces several inaccuracies including incorrect dates, incorrect priority, and a hallucinated rationale for a decision."
+      "reasoning": "The generated JSON is very close to the reference, preserving the schema and most data points correctly. However, it has a priority discrepancy (medium vs high) in the first action item and contains slightly shortened/paraphrased titles and descriptions."
     }
   },
   {
     "meeting_id": "10",
-    "overall_score": 65,
-    "missing_information": [
-      "The '_note' fields (with null values) in the 'action_items' and 'decisions' objects are missing from the generated JSON."
-    ],
+    "overall_score": 85,
+    "missing_information": [],
     "strengths": [
-      "Correctly identified and mapped the attendees list.",
-      "Successfully matched task owners, priorities, statuses, and missing fields categories for action items and decisions."
+      "Perfect match on the meeting details, attendees, and ID structure.",
+      "Correctly identified owners, priorities, statuses, and missing fields across all action items and decisions.",
+      "Accurately populated empty lists for blockers and ambiguous fields."
     ],
     "weaknesses": [
-      "Incorrect meeting date ('2026-06-10' instead of '2026-06-13') and corresponding meeting ID.",
-      "Incorrect due date for task_001 ('2026-06-17' instead of '2026-06-20').",
-      "Hallucinated an entry in the 'ambiguous' array ('amb_001') which should be empty according to the reference JSON.",
-      "Omitted '_note' keys present in the reference schema."
+      "Incorrect due_date for task_001 ('2026-06-17' instead of '2026-06-20').",
+      "Truncated titles for action items and decisions, losing detail (e.g., 'Create wireframes' instead of 'Create wireframes for new website design')."
     ],
-    "reasoning": "The generated JSON has multiple date mismatches (for the meeting and task_001) and hallucinated an entire ambiguous task item that is not in the reference data. It also omitted structural keys like '_note'.",
+    "reasoning": "The generated JSON has the correct structure and accurately links all entities. However, there is a date discrepancy in task_001, and the text fields for the action items and decisions are slightly truncated compared to the ground truth.",
     "comparison": {
-      "overall_score": 65,
-      "missing_information": [
-        "The '_note' fields (with null values) in the 'action_items' and 'decisions' objects are missing from the generated JSON."
-      ],
+      "overall_score": 85,
+      "missing_information": [],
       "strengths": [
-        "Correctly identified and mapped the attendees list.",
-        "Successfully matched task owners, priorities, statuses, and missing fields categories for action items and decisions."
+        "Perfect match on the meeting details, attendees, and ID structure.",
+        "Correctly identified owners, priorities, statuses, and missing fields across all action items and decisions.",
+        "Accurately populated empty lists for blockers and ambiguous fields."
       ],
       "weaknesses": [
-        "Incorrect meeting date ('2026-06-10' instead of '2026-06-13') and corresponding meeting ID.",
-        "Incorrect due date for task_001 ('2026-06-17' instead of '2026-06-20').",
-        "Hallucinated an entry in the 'ambiguous' array ('amb_001') which should be empty according to the reference JSON.",
-        "Omitted '_note' keys present in the reference schema."
+        "Incorrect due_date for task_001 ('2026-06-17' instead of '2026-06-20').",
+        "Truncated titles for action items and decisions, losing detail (e.g., 'Create wireframes' instead of 'Create wireframes for new website design')."
       ],
-      "reasoning": "The generated JSON has multiple date mismatches (for the meeting and task_001) and hallucinated an entire ambiguous task item that is not in the reference data. It also omitted structural keys like '_note'."
+      "reasoning": "The generated JSON has the correct structure and accurately links all entities. However, there is a date discrepancy in task_001, and the text fields for the action items and decisions are slightly truncated compared to the ground truth."
     }
   },
   {
     "meeting_id": "11",
-    "overall_score": 55,
+    "overall_score": 65,
     "missing_information": [
-      "The correct meeting date and ID ('2026-06-14' and 'meet_2026_06_14').",
-      "The correct due date for task_001 ('2026-06-20').",
-      "The '_note' key in action_items and decisions."
+      "In task_001, missing the specific details 'on new product features' in the title.",
+      "In task_002, missing 'and handle logistics' in the title."
     ],
     "strengths": [
-      "Correctly identified and mapped meeting attendees.",
-      "Maintained the correct schema structure, matching task owners, priorities, and statuses."
+      "Successfully captured all meeting metadata including ID, date, title, and attendees accurately.",
+      "Maintained the correct JSON structure and schema."
     ],
     "weaknesses": [
-      "Incorrect meeting date and ID.",
-      "Incorrect due date for task_001 ('2026-06-14' instead of '2026-06-20').",
-      "Hallucinated extra decisions (dec_002, dec_003).",
-      "Hallucinated an entire blocker item (blk_001) and an ambiguous item (amb_001) which are empty in the ground truth.",
-      "Modified titles for tasks and decisions instead of keeping them exact.",
-      "Omitted '_note' keys within the action_items and decisions arrays."
+      "In task_001, the due_date is incorrect (2026-06-19 instead of 2026-06-20) and the priority is incorrect (medium instead of high).",
+      "In dec_001, the status is incorrect (pending instead of confirmed).",
+      "Added an extra blocker (blk_001) that is not present in the reference ground truth."
     ],
-    "reasoning": "The generated JSON contains substantial hallucinations, including extra decisions, blockers, and ambiguous items that are not in the Ground Truth. It also got critical metadata wrong, such as the meeting date/ID and the task due date, leading to a much lower overall quality score.",
+    "reasoning": "The generated JSON has the correct structure and accurately captures the meeting information. However, it contains multiple inaccuracies in the action items (wrong due date, priority, and truncated titles), an incorrect status for the decision, and hallucinates an extra blocker that is not in the reference data.",
     "comparison": {
-      "overall_score": 55,
+      "overall_score": 65,
       "missing_information": [
-        "The correct meeting date and ID ('2026-06-14' and 'meet_2026_06_14').",
-        "The correct due date for task_001 ('2026-06-20').",
-        "The '_note' key in action_items and decisions."
+        "In task_001, missing the specific details 'on new product features' in the title.",
+        "In task_002, missing 'and handle logistics' in the title."
       ],
       "strengths": [
-        "Correctly identified and mapped meeting attendees.",
-        "Maintained the correct schema structure, matching task owners, priorities, and statuses."
+        "Successfully captured all meeting metadata including ID, date, title, and attendees accurately.",
+        "Maintained the correct JSON structure and schema."
       ],
       "weaknesses": [
-        "Incorrect meeting date and ID.",
-        "Incorrect due date for task_001 ('2026-06-14' instead of '2026-06-20').",
-        "Hallucinated extra decisions (dec_002, dec_003).",
-        "Hallucinated an entire blocker item (blk_001) and an ambiguous item (amb_001) which are empty in the ground truth.",
-        "Modified titles for tasks and decisions instead of keeping them exact.",
-        "Omitted '_note' keys within the action_items and decisions arrays."
+        "In task_001, the due_date is incorrect (2026-06-19 instead of 2026-06-20) and the priority is incorrect (medium instead of high).",
+        "In dec_001, the status is incorrect (pending instead of confirmed).",
+        "Added an extra blocker (blk_001) that is not present in the reference ground truth."
       ],
-      "reasoning": "The generated JSON contains substantial hallucinations, including extra decisions, blockers, and ambiguous items that are not in the Ground Truth. It also got critical metadata wrong, such as the meeting date/ID and the task due date, leading to a much lower overall quality score."
+      "reasoning": "The generated JSON has the correct structure and accurately captures the meeting information. However, it contains multiple inaccuracies in the action items (wrong due date, priority, and truncated titles), an incorrect status for the decision, and hallucinates an extra blocker that is not in the reference data."
     }
   },
   {
     "meeting_id": "12",
-    "overall_score": 72,
-    "missing_information": [
-      "The '_note' field is missing from all action items and decisions.",
-      "Correct meeting ID and date (should be 'meet_2026_06_15' and '2026-06-15' respectively).",
-      "Correct due date for task_001 (should be '2026-06-29' instead of '2026-06-24').",
-      "Correct priority for task_001 (should be 'high' instead of 'medium')."
-    ],
+    "overall_score": 85,
+    "missing_information": [],
     "strengths": [
-      "Matches the overall JSON structure of the reference JSON.",
-      "Correctly identifies the attendees and structure of blockers/ambiguous lists.",
-      "Maintains correct IDs, statuses, and missing fields mapping for action items and decisions."
+      "Perfect schema structure and field completeness",
+      "Correctly mapped meeting metadata and attendees",
+      "Correctly identified missing fields"
     ],
     "weaknesses": [
-      "Factual errors in critical fields like dates, meeting ID, and priority.",
-      "Minor phrasing mismatches in the action item titles and decision descriptions.",
-      "Omission of the '_note' keys present in the reference schema."
+      "Incorrect priority for task_001 (got 'medium', expected 'high')",
+      "Paraphrased and overly simplified title descriptions for tasks and decisions (e.g., 'Prototype AI concept' instead of 'Prototype AI integration concept for new product', and 'Prioritize sustainable features' instead of 'Prioritize sustainability features in new innovations')"
     ],
-    "reasoning": "The generated JSON correctly mirrors the structure and captured most fields, but contains multiple factual inaccuracies regarding dates, meeting metadata, priority values, and slight phrasing differences. It also omitted the '_note' keys.",
+    "reasoning": "The generated JSON correctly structure matches the reference with exact attendee lists and IDs. However, it loses specificity by shortening several titles/descriptions, and has an incorrect priority value ('medium' instead of 'high') for task_001.",
     "comparison": {
-      "overall_score": 72,
-      "missing_information": [
-        "The '_note' field is missing from all action items and decisions.",
-        "Correct meeting ID and date (should be 'meet_2026_06_15' and '2026-06-15' respectively).",
-        "Correct due date for task_001 (should be '2026-06-29' instead of '2026-06-24').",
-        "Correct priority for task_001 (should be 'high' instead of 'medium')."
-      ],
+      "overall_score": 85,
+      "missing_information": [],
       "strengths": [
-        "Matches the overall JSON structure of the reference JSON.",
-        "Correctly identifies the attendees and structure of blockers/ambiguous lists.",
-        "Maintains correct IDs, statuses, and missing fields mapping for action items and decisions."
+        "Perfect schema structure and field completeness",
+        "Correctly mapped meeting metadata and attendees",
+        "Correctly identified missing fields"
       ],
       "weaknesses": [
-        "Factual errors in critical fields like dates, meeting ID, and priority.",
-        "Minor phrasing mismatches in the action item titles and decision descriptions.",
-        "Omission of the '_note' keys present in the reference schema."
+        "Incorrect priority for task_001 (got 'medium', expected 'high')",
+        "Paraphrased and overly simplified title descriptions for tasks and decisions (e.g., 'Prototype AI concept' instead of 'Prototype AI integration concept for new product', and 'Prioritize sustainable features' instead of 'Prioritize sustainability features in new innovations')"
       ],
-      "reasoning": "The generated JSON correctly mirrors the structure and captured most fields, but contains multiple factual inaccuracies regarding dates, meeting metadata, priority values, and slight phrasing differences. It also omitted the '_note' keys."
+      "reasoning": "The generated JSON correctly structure matches the reference with exact attendee lists and IDs. However, it loses specificity by shortening several titles/descriptions, and has an incorrect priority value ('medium' instead of 'high') for task_001."
     }
   },
   {
     "meeting_id": "13",
-    "overall_score": 65,
+    "overall_score": 70,
     "missing_information": [
-      "The correct meeting date and action item due date (2026-06-16) are incorrect (represented as 2026-06-10).",
-      "The '_note' field is missing from the action_items objects.",
-      "The original ambiguous item 'Aim for better pricing in negotiations' is missing from the ambiguous list (it was incorrectly categorized as a decision)."
+      "Missing ambiguous item 'amb_001' regarding aiming for better pricing in negotiations."
     ],
     "strengths": [
-      "Correctly identified meeting attendees and title.",
-      "Successfully captured the primary action items and assigned the correct owners.",
-      "Correctly recognized that 'due_date' was missing for the second task."
+      "Perfect matching of meeting metadata (id, date, title, attendees).",
+      "Action items have correct IDs, owners, due dates, statuses, and missing_fields."
     ],
     "weaknesses": [
-      "Incorrect dates used throughout the document (2026-06-10 instead of 2026-06-16).",
-      "Misclassified an ambiguous point ('Aim for better pricing...') as a confirmed decision.",
-      "Hallucinated two extra ambiguous items (amb_001 and amb_002 in Gen) that are not present in the Reference.",
-      "Incorrect priority for task_002 ('medium' instead of 'high').",
-      "Omitted the '_note' fields from the action items schema."
+      "Action item priorities are incorrect ('medium' instead of 'high' for both tasks).",
+      "Action item titles are overly simplified compared to the reference.",
+      "Entirely missed the ambiguous list entry."
     ],
-    "reasoning": "The Generated JSON got the core attendee list and general task descriptions right, but suffered from several hallucinated entries (extra ambiguous items), wrong dates (June 10 instead of June 16), incorrect task priority, and a structural misclassification of an ambiguous point as a decision.",
+    "reasoning": "The generated JSON successfully captures the meeting info and base action item structures, but misses the entire ambiguous item, has simplified task titles, and incorrect priority values for the tasks.",
     "comparison": {
-      "overall_score": 65,
+      "overall_score": 70,
       "missing_information": [
-        "The correct meeting date and action item due date (2026-06-16) are incorrect (represented as 2026-06-10).",
-        "The '_note' field is missing from the action_items objects.",
-        "The original ambiguous item 'Aim for better pricing in negotiations' is missing from the ambiguous list (it was incorrectly categorized as a decision)."
+        "Missing ambiguous item 'amb_001' regarding aiming for better pricing in negotiations."
       ],
       "strengths": [
-        "Correctly identified meeting attendees and title.",
-        "Successfully captured the primary action items and assigned the correct owners.",
-        "Correctly recognized that 'due_date' was missing for the second task."
+        "Perfect matching of meeting metadata (id, date, title, attendees).",
+        "Action items have correct IDs, owners, due dates, statuses, and missing_fields."
       ],
       "weaknesses": [
-        "Incorrect dates used throughout the document (2026-06-10 instead of 2026-06-16).",
-        "Misclassified an ambiguous point ('Aim for better pricing...') as a confirmed decision.",
-        "Hallucinated two extra ambiguous items (amb_001 and amb_002 in Gen) that are not present in the Reference.",
-        "Incorrect priority for task_002 ('medium' instead of 'high').",
-        "Omitted the '_note' fields from the action items schema."
+        "Action item priorities are incorrect ('medium' instead of 'high' for both tasks).",
+        "Action item titles are overly simplified compared to the reference.",
+        "Entirely missed the ambiguous list entry."
       ],
-      "reasoning": "The Generated JSON got the core attendee list and general task descriptions right, but suffered from several hallucinated entries (extra ambiguous items), wrong dates (June 10 instead of June 16), incorrect task priority, and a structural misclassification of an ambiguous point as a decision."
+      "reasoning": "The generated JSON successfully captures the meeting info and base action item structures, but misses the entire ambiguous item, has simplified task titles, and incorrect priority values for the tasks."
     }
   },
   {
     "meeting_id": "14",
-    "overall_score": 55,
-    "missing_information": [
-      "Correct meeting date (2026-06-17 instead of 2026-06-10)",
-      "Correct task_001 due date (2026-07-17 instead of 2026-07-10)",
-      "Identification of 'due_date' as a missing field in task_002",
-      "Identification of 'rationale' as a missing field in dec_001"
-    ],
+    "overall_score": 72,
+    "missing_information": [],
     "strengths": [
-      "Maintained the correct JSON structure.",
-      "Correctly listed meeting attendees.",
-      "Captured the main core of the action items and decisions."
+      "Correctly captured the meeting metadata (id, date, title, attendees).",
+      "Successfully mapped the core tasks (task_001, task_002) and decision (dec_001)."
     ],
     "weaknesses": [
-      "Hallucinated dates for the meeting and action items.",
-      "Incorrectly filled missing fields (due_date in task_002, rationale in dec_001) instead of leaving them null and flagging them in 'missing_fields'.",
-      "Added several hallucinated items to the 'ambiguous' list, which should have been empty.",
-      "Altered titles and descriptions slightly away from the reference ground truth."
+      "Incorrectly changed the priority of task_001 from 'high' to 'medium'.",
+      "Hallucinated a due_date of '2026-06-30' for task_002, which was null in the reference, leading to an incorrect empty 'missing_fields' list.",
+      "Created an extra action item (task_003) for closing audit findings, which was already represented as a decision (dec_001) in the reference.",
+      "Truncated the titles of the action items (e.g., 'Address compliance gaps' instead of 'Address compliance gaps identified in audit')."
     ],
-    "reasoning": "The generated JSON has significant discrepancies regarding dates, missing fields, and extra hallucinated notes/ambiguous items. It incorrectly resolved missing fields (like due date and rationale) with fabricated data instead of keeping them null and listing them as missing.",
+    "reasoning": "The generated JSON captures the overall context but introduces several factual errors. It hallucinated a due date for task_002, altered the priority of task_001, truncated task titles, and unnecessarily duplicated the decision item as an extra action item (task_003).",
     "comparison": {
-      "overall_score": 55,
-      "missing_information": [
-        "Correct meeting date (2026-06-17 instead of 2026-06-10)",
-        "Correct task_001 due date (2026-07-17 instead of 2026-07-10)",
-        "Identification of 'due_date' as a missing field in task_002",
-        "Identification of 'rationale' as a missing field in dec_001"
-      ],
+      "overall_score": 72,
+      "missing_information": [],
       "strengths": [
-        "Maintained the correct JSON structure.",
-        "Correctly listed meeting attendees.",
-        "Captured the main core of the action items and decisions."
+        "Correctly captured the meeting metadata (id, date, title, attendees).",
+        "Successfully mapped the core tasks (task_001, task_002) and decision (dec_001)."
       ],
       "weaknesses": [
-        "Hallucinated dates for the meeting and action items.",
-        "Incorrectly filled missing fields (due_date in task_002, rationale in dec_001) instead of leaving them null and flagging them in 'missing_fields'.",
-        "Added several hallucinated items to the 'ambiguous' list, which should have been empty.",
-        "Altered titles and descriptions slightly away from the reference ground truth."
+        "Incorrectly changed the priority of task_001 from 'high' to 'medium'.",
+        "Hallucinated a due_date of '2026-06-30' for task_002, which was null in the reference, leading to an incorrect empty 'missing_fields' list.",
+        "Created an extra action item (task_003) for closing audit findings, which was already represented as a decision (dec_001) in the reference.",
+        "Truncated the titles of the action items (e.g., 'Address compliance gaps' instead of 'Address compliance gaps identified in audit')."
       ],
-      "reasoning": "The generated JSON has significant discrepancies regarding dates, missing fields, and extra hallucinated notes/ambiguous items. It incorrectly resolved missing fields (like due date and rationale) with fabricated data instead of keeping them null and listing them as missing."
+      "reasoning": "The generated JSON captures the overall context but introduces several factual errors. It hallucinated a due date for task_002, altered the priority of task_001, truncated task titles, and unnecessarily duplicated the decision item as an extra action item (task_003)."
     }
   },
   {
     "meeting_id": "15",
-    "overall_score": 60,
+    "overall_score": 75,
     "missing_information": [
-      "The correct meeting ID and date (Reference has 'meet_2026_06_18' and '2026-06-18', Generated has 'meet_2026_06_10' and '2026-06-10')",
-      "The correct due date and priority for 'task_001' (Reference has '2026-06-20' and 'high', Generated has '2026-06-12' and 'medium')",
-      "The '_note' fields in 'action_items' are missing in the Generated JSON."
+      "The full detail of the title for task_001 ('Prepare collaboration proposal for potential partner' was truncated to 'Prepare proposal')",
+      "The full detail of the title for task_002 ('Consult legal team on data sharing and partnership terms' was truncated to 'Consult legal team')",
+      "The correct priority 'high' for task_001 and task_002 (both were incorrectly marked as 'medium')"
     ],
     "strengths": [
-      "The attendees list is correct.",
-      "The structure of the JSON is mostly maintained and valid.",
-      "Action items are mapped to the correct owners."
+      "Perfect JSON structure matching the reference.",
+      "Correctly identified all meeting details, attendees, and main task/decision IDs.",
+      "Correctly handled null values and empty arrays."
     ],
     "weaknesses": [
-      "Incorrect meeting date and ID.",
-      "Incorrect due date and priority for the first action item.",
-      "Hallucinated a rationale for 'dec_001' and cleared the 'missing_fields' array, which should contain 'rationale'.",
-      "Hallucinated an entire blocker item in the 'blockers' list, which should be empty."
+      "Incorrect due date for task_001 ('2026-06-19' instead of '2026-06-20').",
+      "Incorrect priority values for both action items ('medium' instead of 'high').",
+      "Over-simplification of titles for action items.",
+      "Minor wording differences in decision title and note compared to the reference."
     ],
-    "reasoning": "The Generated JSON contains multiple factual discrepancies compared to the Reference Ground Truth, including incorrect dates, incorrect priorities, a hallucinated blocker, and hallucinated rationale text for a decision.",
+    "reasoning": "While the schema and structural integrity of the generated JSON are excellent, there are critical factual errors in the content of the action items. Specifically, due dates and priority levels are incorrect, and action item titles have been overly simplified, losing important context.",
     "comparison": {
-      "overall_score": 60,
+      "overall_score": 75,
       "missing_information": [
-        "The correct meeting ID and date (Reference has 'meet_2026_06_18' and '2026-06-18', Generated has 'meet_2026_06_10' and '2026-06-10')",
-        "The correct due date and priority for 'task_001' (Reference has '2026-06-20' and 'high', Generated has '2026-06-12' and 'medium')",
-        "The '_note' fields in 'action_items' are missing in the Generated JSON."
+        "The full detail of the title for task_001 ('Prepare collaboration proposal for potential partner' was truncated to 'Prepare proposal')",
+        "The full detail of the title for task_002 ('Consult legal team on data sharing and partnership terms' was truncated to 'Consult legal team')",
+        "The correct priority 'high' for task_001 and task_002 (both were incorrectly marked as 'medium')"
       ],
       "strengths": [
-        "The attendees list is correct.",
-        "The structure of the JSON is mostly maintained and valid.",
-        "Action items are mapped to the correct owners."
+        "Perfect JSON structure matching the reference.",
+        "Correctly identified all meeting details, attendees, and main task/decision IDs.",
+        "Correctly handled null values and empty arrays."
       ],
       "weaknesses": [
-        "Incorrect meeting date and ID.",
-        "Incorrect due date and priority for the first action item.",
-        "Hallucinated a rationale for 'dec_001' and cleared the 'missing_fields' array, which should contain 'rationale'.",
-        "Hallucinated an entire blocker item in the 'blockers' list, which should be empty."
+        "Incorrect due date for task_001 ('2026-06-19' instead of '2026-06-20').",
+        "Incorrect priority values for both action items ('medium' instead of 'high').",
+        "Over-simplification of titles for action items.",
+        "Minor wording differences in decision title and note compared to the reference."
       ],
-      "reasoning": "The Generated JSON contains multiple factual discrepancies compared to the Reference Ground Truth, including incorrect dates, incorrect priorities, a hallucinated blocker, and hallucinated rationale text for a decision."
+      "reasoning": "While the schema and structural integrity of the generated JSON are excellent, there are critical factual errors in the content of the action items. Specifically, due dates and priority levels are incorrect, and action item titles have been overly simplified, losing important context."
     }
   }
 ]

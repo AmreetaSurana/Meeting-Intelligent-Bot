@@ -1,23 +1,21 @@
 """
-evaluation.py
+evaluation.py  —  app/evaluation/evaluation.py
 
-Place this file at:  app/evaluation/evaluation.py
+Compares every file in  app/evaluation/created_json/
+against its reference in  app/evaluation/given_json/
+using an LLM-as-judge and prints a full report to the terminal.
 
-Expected directory layout:
-    app/evaluation/
-        given_json/    meeting_analysis_1.json   ... (reference / ground truth)
-        created_json/  generated_meeting_analysis_1.json ... (pipeline output)
+Run AFTER generate_json.py has populated created_json/:
+    python app/evaluation/evaluation.py
 """
 
 import json
 import re
-import time
 import sys
+import time
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-# ---------------------------------------------------------------------------
-# Imports from project
 # ---------------------------------------------------------------------------
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -34,26 +32,25 @@ except ImportError:
     print("❌  google-genai not installed. Run: pip install google-genai")
     sys.exit(1)
 
-
 # ---------------------------------------------------------------------------
+
 class MeetingEvaluator:
-    """Compare generated JSONs (created_json/) against reference JSONs (given_json/)."""
+    """Compare created_json/ files against given_json/ reference files via LLM judge."""
 
     def __init__(self, base_dir: str = "app/evaluation", batch_size: int = 3):
         self.base_dir         = Path(base_dir)
         self.ref_json_dir     = self.base_dir / "given_json"
         self.created_json_dir = self.base_dir / "created_json"
-
+        self.batch_size       = batch_size
         self.results: List[Dict] = []
-        self.batch_size = batch_size
 
     # ------------------------------------------------------------------
     def find_json_pairs(self) -> List[Tuple[str, Path, Path]]:
         if not self.ref_json_dir.exists():
-            print(f"❌ Reference JSON directory not found: {self.ref_json_dir.resolve()}")
+            print(f"❌ Reference JSON dir not found: {self.ref_json_dir.resolve()}")
             return []
         if not self.created_json_dir.exists():
-            print(f"❌ Created JSON directory not found: {self.created_json_dir.resolve()}")
+            print(f"❌ Created JSON dir not found: {self.created_json_dir.resolve()}")
             return []
 
         ref_jsons     = sorted(self.ref_json_dir.glob("*.json"))
@@ -62,7 +59,6 @@ class MeetingEvaluator:
         print(f"\n   📂 Reference JSONs ({len(ref_jsons)}):  {[f.name for f in ref_jsons]}")
         print(f"   📂 Created JSONs   ({len(created_jsons)}):  {[f.name for f in created_jsons]}")
 
-        # Map number → path for each side
         ref_map: Dict[str, Path] = {}
         for f in ref_jsons:
             m = re.search(r"(\d+)", f.stem)
@@ -76,11 +72,11 @@ class MeetingEvaluator:
                 created_map[m.group(1)] = f
 
         pairs = []
-        for num, ref_path in sorted(ref_map.items(), key=lambda x: int(x[0])):
+        for num in sorted(ref_map.keys(), key=int):
             if num in created_map:
-                pairs.append((num, created_map[num], ref_path))
+                pairs.append((num, created_map[num], ref_map[num]))
             else:
-                print(f"   ⚠️  No created JSON found for reference meeting {num} — skipping.")
+                print(f"   ⚠️  No created JSON for reference meeting {num} — skipping.")
 
         print(f"\n✅ Matched {len(pairs)} pair(s) for evaluation.")
         return pairs

@@ -1,7 +1,7 @@
 {
   "meeting": {
-    "id": "meet_2026_06_10",
-    "date": "2026-06-10",
+    "id": "meet_2026_06_18",
+    "date": "2026-06-18",
     "title": "Partnership Exploration Call",
     "attendees": [
       "Ishaan Kumar",
@@ -13,44 +13,39 @@
   "action_items": [
     {
       "id": "task_001",
-      "title": "Prepare partnership proposal",
+      "title": "Prepare proposal",
       "owner": "Sara Ali",
-      "due_date": "2026-06-12",
+      "due_date": "2026-06-19",
       "priority": "medium",
       "status": "open",
-      "missing_fields": []
+      "missing_fields": [],
+      "_note": null
     },
     {
       "id": "task_002",
-      "title": "Consult legal team regarding data sharing concerns",
+      "title": "Consult legal team",
       "owner": "Kiara Nair",
       "due_date": null,
-      "priority": "high",
+      "priority": "medium",
       "status": "open",
       "missing_fields": [
         "due_date"
-      ]
+      ],
+      "_note": null
     }
   ],
   "decisions": [
     {
       "id": "dec_001",
-      "decision": "Proceed with the partnership",
-      "rationale": "There are mutual benefits in the tech stack, but progress is conditional on favorable terms.",
+      "decision": "Proceed with collaboration if terms are favorable.",
+      "rationale": null,
       "status": "pending",
-      "missing_fields": [],
-      "_note": "The final decision to proceed is contingent on favorable terms from the proposal and clearing legal concerns."
+      "missing_fields": [
+        "rationale"
+      ],
+      "_note": "Decision is conditional on favorable terms."
     }
   ],
-  "blockers": [
-    {
-      "id": "blk_001",
-      "task": "Proceeding with the partnership agreement",
-      "blocked_by": "Data sharing concerns requiring a legal review",
-      "owner": "Kiara Nair",
-      "ticket": null,
-      "missing_fields": []
-    }
-  ],
+  "blockers": [],
   "ambiguous": []
 }

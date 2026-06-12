@@ -1,7 +1,7 @@
 {
   "meeting": {
-    "id": "meet_2026_06_10",
-    "date": "2026-06-10",
+    "id": "meet_2026_06_14",
+    "date": "2026-06-14",
     "title": "Customer Support Training Session Planning",
     "attendees": [
       "Zara Khan",
@@ -13,12 +13,13 @@
   "action_items": [
     {
       "id": "task_001",
-      "title": "Prepare advanced training modules",
+      "title": "Prepare training modules",
       "owner": "Faisal Ahmed",
-      "due_date": "2026-06-14",
-      "priority": "high",
+      "due_date": "2026-06-19",
+      "priority": "medium",
       "status": "open",
-      "missing_fields": []
+      "missing_fields": [],
+      "_note": null
     },
     {
       "id": "task_002",
@@ -29,36 +30,20 @@
       "status": "open",
       "missing_fields": [
         "due_date"
-      ]
+      ],
+      "_note": null
     }
   ],
   "decisions": [
     {
       "id": "dec_001",
-      "decision": "Start advanced support training next month",
-      "rationale": null,
-      "status": "confirmed",
-      "missing_fields": [
-        "rationale"
-      ]
-    },
-    {
-      "id": "dec_002",
-      "decision": "Include new product features in the training",
+      "decision": "Start advanced training for support staff next month",
       "rationale": null,
       "status": "pending",
       "missing_fields": [
         "rationale"
-      ]
-    },
-    {
-      "id": "dec_003",
-      "decision": "Include role-playing scenarios in the training",
-      "rationale": null,
-      "status": "pending",
-      "missing_fields": [
-        "rationale"
-      ]
+      ],
+      "_note": null
     }
   ],
   "blockers": [
@@ -71,12 +56,5 @@
       "missing_fields": []
     }
   ],
-  "ambiguous": [
-    {
-      "id": "amb_001",
-      "description": "Possible schedule conflicts for the training session are unresolved",
-      "owner": "Omkar Rao",
-      "_note": "Omkar needs to review and resolve potential scheduling conflicts to ensure the room booking can be finalized."
-    }
-  ]
+  "ambiguous": []
 }

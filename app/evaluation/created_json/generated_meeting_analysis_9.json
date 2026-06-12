@@ -1,7 +1,7 @@
 {
   "meeting": {
-    "id": "meet_2026_06_11",
-    "date": "2026-06-11",
+    "id": "meet_2026_06_12",
+    "date": "2026-06-12",
     "title": "Sales Performance Quarterly Review",
     "attendees": [
       "Niharika Jain",
@@ -13,32 +13,37 @@
   "action_items": [
     {
       "id": "task_001",
-      "title": "Analyze regional sales data",
+      "title": "Analyze regional data",
       "owner": "Karan Thakur",
-      "due_date": "2026-06-16",
+      "due_date": "2026-06-15",
       "priority": "medium",
       "status": "open",
-      "missing_fields": []
+      "missing_fields": [],
+      "_note": null
     },
     {
       "id": "task_002",
-      "title": "Design a new incentive program",
+      "title": "Design new incentive program",
       "owner": "Akash Pillai",
       "due_date": null,
       "priority": "medium",
       "status": "open",
       "missing_fields": [
         "due_date"
-      ]
+      ],
+      "_note": null
     }
   ],
   "decisions": [
     {
       "id": "dec_001",
-      "decision": "Approved to roll out training sessions",
-      "rationale": "To address underperforming teams as required by Swati Mehra.",
+      "decision": "Training sessions are approved to be rolled out.",
+      "rationale": null,
       "status": "confirmed",
-      "missing_fields": []
+      "missing_fields": [
+        "rationale"
+      ],
+      "_note": null
     }
   ],
   "blockers": [],

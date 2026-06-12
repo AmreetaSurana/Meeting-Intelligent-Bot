@@ -1,7 +1,7 @@
 {
   "meeting": {
-    "id": "meet_2026_06_10",
-    "date": "2026-06-10",
+    "id": "meet_2026_06_13",
+    "date": "2026-06-13",
     "title": "Website Redesign Kickoff",
     "attendees": [
       "Esha Roy",
@@ -13,43 +13,39 @@
   "action_items": [
     {
       "id": "task_001",
-      "title": "Create wireframes for the website redesign",
+      "title": "Create wireframes",
       "owner": "Manav Gupta",
       "due_date": "2026-06-17",
       "priority": "high",
       "status": "open",
-      "missing_fields": []
+      "missing_fields": [],
+      "_note": null
     },
     {
       "id": "task_002",
-      "title": "Conduct website content audit",
+      "title": "Conduct content audit",
       "owner": "Yash Khurana",
       "due_date": null,
       "priority": "medium",
       "status": "open",
       "missing_fields": [
         "due_date"
-      ]
+      ],
+      "_note": null
     }
   ],
   "decisions": [
     {
       "id": "dec_001",
-      "decision": "Proceed with a modern UI framework for the redesign",
+      "decision": "Use a modern UI framework",
       "rationale": null,
       "status": "confirmed",
       "missing_fields": [
         "rationale"
-      ]
+      ],
+      "_note": null
     }
   ],
   "blockers": [],
-  "ambiguous": [
-    {
-      "id": "amb_001",
-      "description": "Yash noted that a content migration plan is needed, but no official task, owner, or timeline was designated to create it.",
-      "owner": null,
-      "_note": "Determine who will draft the content migration plan and establish a target delivery date."
-    }
-  ]
+  "ambiguous": []
 }
