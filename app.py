@@ -20,6 +20,13 @@ from app.pipeline.validator import clean_json_response
 from app.db.db_schema import initialise_db, get_connection
 from app.db.db_writer import save_extraction
 from app.notifications.notification_engine import notify_meeting
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return
 
 st.set_page_config(
     page_title="Intelligence Meeting Bot",
