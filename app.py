@@ -1,5 +1,5 @@
 """
-app_ui.py
+app.py
 =========
 Streamlit UI for the meeting extraction pipeline.
 """

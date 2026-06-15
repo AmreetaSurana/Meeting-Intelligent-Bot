@@ -94,7 +94,7 @@ def save_extraction(data: dict) -> str:
     meeting    = data["meeting"]
     meeting_id = _new_meeting_id()
 
-    # Write back so callers (e.g. app_ui.py) can read the actual stored id
+    # Write back so callers (e.g. app.py) can read the actual stored id
     meeting["id"] = meeting_id
 
     conn = get_connection()
