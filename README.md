@@ -1,151 +1,304 @@
-**Meeting Intelligence Agent**
+# 🎙️ Meeting Intelligence Bot
 
-**1\. Project Overview**
+An AI-powered meeting analysis platform that transforms unstructured meeting transcripts into actionable business intelligence.
 
-**1.1 Problem Statement**
+**Live Demo:** https://meeting-intelligent-bot.streamlit.app/
 
-Engineering and product teams conduct 10-20 meetings per week. Despite this, action items routinely go untracked, decisions made weeks ago are relitigated, and accountability gaps emerge because no structured record is maintained. Existing tools like Otter.ai, Fireflies, and Fathom provide transcription, but none automatically extract structured intelligence and push it into a task management system with automated follow-up.
+---
 
-**1.2 Solution**
+## Overview
 
-The Meeting Intelligence Agent is an end-to-end pipeline that ingests raw Google Meet transcripts, uses a Large Language Model to extract structured tasks, decisions, blockers, and ambiguous items, pushes them automatically to ClickUp/Monday.com, logs them in a local database, and runs a scheduled notification engine that sends contextual emails for assignments, approaching deadlines, and overdue tasks. An LLM evaluation layer measures extraction quality, attribution accuracy, and RAG faithfulness across every run.
+Meeting Intelligence Bot automates the entire post-meeting workflow by extracting structured insights from meeting transcripts using Large Language Models (LLMs).
 
-**1.3 Core Value Propositions**
+Instead of manually reviewing lengthy transcripts, users can upload meeting notes and instantly generate:
 
-- Zero manual effort : transcript upload triggers the entire pipeline automatically
-- Structured intelligence : four categories extracted (tasks, decisions, blockers, ambiguous) not just a summary
-- Contextual notifications : emails include the original meeting context, not just a generic reminder
-- Queryable history : past meeting decisions searchable via natural language over Chroma vector index (optional)
-- Measurable quality : extraction precision, attribution accuracy, and RAG faithfulness scored on every run
+* Action Items
+* Decisions Taken
+* Blockers
+* Ambiguous Items Requiring Clarification
+* Ownership Assignments
+* Due Dates
+* Notification Emails
 
-**2\. Technical Architecture & Pipeline**
+The platform stores extracted information in a structured database and automatically generates personalized notifications for meeting participants.
 
-**2.1 Technology Stack**
+---
 
-| **Component**       | **Technology**                                  | **Purpose**                                            |
-| ------------------- | ----------------------------------------------- | ------------------------------------------------------ |
-| Transcript Input    | Google Meet .vtt / .txt export, Fathom, Whisper | Source of raw meeting transcript                       |
-| ---                 | ---                                             | ---                                                    |
-| Pre-processing      | Python (regex module)                           | Strip timestamps, group by speaker, format text        |
-| ---                 | ---                                             | ---                                                    |
-| LLM Extraction      | Azure OpenAI GPT-4o                             | Extract structured JSON from cleaned transcript        |
-| ---                 | ---                                             | ---                                                    |
-| JSON Validation     | Python json + datetime                          | Enforce schema, fix missing fields and bad dates       |
-| ---                 | ---                                             | ---                                                    |
-| Task Board          | ClickUp/Monday.com REST API v2                  | Create tasks with assignees, due dates, priorities     |
-| ---                 | ---                                             | ---                                                    |
-| Structured Storage  | SQLite                                          | Store tasks, due dates, status, notification log       |
-| ---                 | ---                                             | ---                                                    |
-| Transcript Memory   | Chroma (vector DB)                              | Embed transcript chunks for contextual email retrieval |
-| ---                 | ---                                             | ---                                                    |
-| Email Notifications | Gmail API (OAuth2)                              | Send assignment, reminder, and overdue emails          |
-| ---                 | ---                                             | ---                                                    |
-| Email Scheduling    | APScheduler (cron)                              | Daily deadline and overdue detection at 11 AM          |
-| ---                 | ---                                             | ---                                                    |
-| Evaluation          | DeepEval, RAGAS, MLflow                         | Score extraction quality and RAG faithfulness          |
-| ---                 | ---                                             | ---                                                    |
+## Key Features
 
-**2.2 End-to-End Pipeline (7 Stages)**
+### AI-Powered Meeting Analysis
 
-**Stage 1 - Transcript Input:** Accepts .vtt or .txt from Google Meet. Whisper provides audio-to-text fallback. All inputs normalised to plain text.
+* Uses Google Gemini LLM for structured information extraction
+* Converts raw meeting transcripts into machine-readable JSON
+* Extracts tasks, decisions, blockers, and follow-up items
 
-**Stage 2 - Pre-Processing:** Python re module strips timestamps and cue numbers, groups consecutive lines by speaker, and formats clean \[Speaker\]: text output for the LLM.
+### Intelligent Action Item Tracking
 
-**Stage 3 - LLM Extraction:** Cleaned transcript sent to GPT-4o with a fixed system prompt. Model returns only valid JSON - no markdown, no explanation. Same prompt on every transcript ensures deterministic, evaluable output.
+* Identifies task owners
+* Extracts deadlines
+* Detects missing information
+* Tracks task status
 
-**Stage 4 - JSON Validation:** Output validated with Python json + datetime. Missing fields default to Unassigned / medium / null. Malformed dates reset to null. All downstream consumers receive a schema-compliant object**.**
+### Automated Notifications
 
-**Stage 5 - Parallel Storage Routing:** Validated JSON routed simultaneously to ClickUp/Monday.com API (task creation), SQLite (deadline scheduling), Chroma (optional transcript embedding), and Gmail API (immediate assignment email).
+* Personalized email digests
+* Meeting-specific reminders
+* Assignment notifications
+* Deadline tracking
 
-**Stage 6 - Notification Engine:** APScheduler cron runs daily at 11 AM. Queries SQLite for tasks due in 1 day or overdue (excluding already-notified). LLM composes email body using SQLite fields and optional Chroma context. All sent emails logged to prevent duplicates.
+### Structured Data Storage
 
-**Stage 7 - LLM Evaluation:** Every run scored across four dimensions against ground-truth annotated test transcripts. Scores and config logged to MLflow for cross-run comparison.
+* SQLite-based storage layer
+* Meeting history tracking
+* Queryable records
+* Persistent action item management
 
-**3\. Data Design**
+### Evaluation Framework
 
-**3.1 Extracted JSON Schema**
+* Automated JSON quality validation
+* Ground-truth comparison support
+* Extraction accuracy assessment
+* LLM output evaluation
 
-| **Field Group** | **Fields**                       | **Description**                            |
-| --------------- | -------------------------------- | ------------------------------------------ |
-| action_items    | title, owner, due_date, priority | Tasks explicitly assigned to a team member |
-| ---             | ---                              | ---                                        |
-| decisions       | decision, rationale              | Outcomes agreed upon during the meeting    |
-| ---             | ---                              | ---                                        |
-| blockers        | task, blocked_by, owner          | Tasks dependent on another unfinished item |
-| ---             | ---                              | ---                                        |
-| ambiguous       | description, owner: null         | Work discussed but no clear owner assigned |
-| ---             | ---                              | ---                                        |
+### Modern Streamlit Dashboard
 
-**3.2 ClickUp/Monday.com API Fields Mapped**
+* Interactive transcript upload
+* Structured results visualization
+* Meeting analytics dashboard
+* Downloadable outputs
 
-| **ClickUp/Monday.com API Field** | **Source in JSON**             | **Notes**                                                |
-| -------------------------------- | ------------------------------ | -------------------------------------------------------- |
-| name                             | action_items\[\].title         | Task title as extracted                                  |
-| ---                              | ---                            | ---                                                      |
-| assignees\[\]                    | action_items\[\].owner         | Mapped to ClickUp/Monday.com user ID via member registry |
-| ---                              | ---                            | ---                                                      |
-| due_date (Unix ms)               | action_items\[\].due_date      | Converted from YYYY-MM-DD to milliseconds                |
-| ---                              | ---                            | ---                                                      |
-| priority (1-3)                   | action_items\[\].priority      | high=1, medium=2, low=3                                  |
-| ---                              | ---                            | ---                                                      |
-| markdown_description             | Generated from meeting context | Includes meeting date and relevant transcript except     |
-| ---                              | ---                            | ---                                                      |
-| tags\[\]                         | Static: meeting-extracted      | Identifies all auto-created tasks                        |
-| ---                              | ---                            | ---                                                      |
-| links_to (dependency)            | blockers\[\].blocked_by        | Created via POST /task/{id}/dependency                   |
-| ---                              | ---                            | ---                                                      |
+---
 
-**3.3 SQLite Schema (tasks table)**
+## Architecture
 
-CREATE TABLE tasks (id INTEGER PRIMARY KEY, title TEXT, owner TEXT, assignee_email TEXT, due_date TEXT, priority TEXT, status TEXT DEFAULT 'open', source_meeting TEXT, last_notified TEXT);
+```text
+Meeting Transcript
+        │
+        ▼
+Transcript Preprocessor
+        │
+        ▼
+Google Gemini LLM
+        │
+        ▼
+Structured JSON Extraction
+        │
+        ▼
+JSON Validation Layer
+        │
+        ▼
+SQLite Database
+        │
+        ├────────► Notification Engine
+        │                    │
+        │                    ▼
+        │              Gmail API
+        │
+        ▼
+Streamlit Dashboard
+```
 
-**3.4 Chroma Collection Design (Optional)**
+---
 
-- Collection: meeting_transcripts · Embedding: text-embedding-3-small (1536 dims)
-- Documents: transcript chunks grouped by speaker turn, tagged with meeting_date and task_id
-- Index: HNSW (auto-built by Chroma) - sub-10ms semantic query at any scale
-- Purpose: contextual retrieval for email composer only - not used for task lookup
+## Tech Stack
 
-**4\. Notification Engine**
+### AI & LLM
 
-| **Email Type**    | **Trigger**                             | **Data Source**         | **Content**                                  |
-| ----------------- | --------------------------------------- | ----------------------- | -------------------------------------------- |
-| Assignment        | Immediately after extraction            | SQLite + Chroma context | Task title, owner, due date, meeting context |
-| ---               | ---                                     | ---                     | ---                                          |
-| Deadline reminder | 3 days before and 1 day before due date | SQLite + Chroma context | Task, deadline, original assignment context  |
-| ---               | ---                                     | ---                     | ---                                          |
-| Overdue alert     | due_date < today, once daily            | SQLite only             | Task, days overdue, escalation note          |
-| ---               | ---                                     | ---                     | ---                                          |
+* Google Gemini
+* Prompt Engineering
+* Structured Output Generation
 
-Assignment and deadline reminder emails are LLM-composed using task fields from SQLite and the most relevant transcript chunk from Chroma (optional). Overdue alerts use SQLite only. All notifications logged to notification_log to prevent duplicate sends.
+### Backend
 
-**5\. LLM Evaluation Layer**
+* Python
+* FastAPI-ready Architecture
+* SQLite
 
-| **Eval Type**       | **Tool**     | **Metric**              | **What it measures**                              |
-| ------------------- | ------------ | ----------------------- | ------------------------------------------------- |
-| Extraction eval     | DeepEval     | Precision / Recall / F1 | Did the LLM capture all tasks correctly?          |
-| ---                 | ---          | ---                     | ---                                               |
-| Attribution eval    | LLM-as-judge | Correct owner %         | Was the right person assigned to each task?       |
-| ---                 | ---          | ---                     | ---                                               |
-| RAG faithfulness    | RAGAS        | Faithfulness score      | Is the email context grounded in the transcript?  |
-| ---                 | ---          | ---                     | ---                                               |
-| Experiment tracking | MLflow       | Run comparison          | Compare extraction quality across prompt versions |
-| ---                 | ---          | ---                     | ---                                               |
+### Frontend
 
-Ground truth: 10-15 annotated test transcripts with reference JSON (expected tasks, decisions, owners) created before evaluation. Extraction agent output compared against reference using precision, recall, and F1. LLM-as-judge scores owner attribution (0-1) with rationale, logged to MLflow. RAGAS faithfulness score below 0.65 triggers a flag in the output.
+* Streamlit
 
-**6\. Limitations & Production Upgrade Path**
+### Data Processing
 
-**Known Limitations**
+* Pandas
+* JSON Validation
+* Regex-Based Transcript Processing
 
-- Unnamed speakers in transcript appear as 'Unassigned' - Google Meet must label speakers
-- Relative due dates ('next Friday') reset to null by the JSON validator
-- SQLite and Chroma (in-process) do not support concurrent multi-user write access
+### Notifications
 
-**Production Upgrade Path**
+* Gmail API
+* OAuth Authentication
 
-- Replace SQLite + Chroma with PostgreSQL + pgvector - one database for structured and semantic search
-- Add Google Meet API to auto-fetch transcripts programmatically after each meeting
-- Add Slack API notifications for teams that prefer in-channel alerts over email
-- Add ClickUp/Monday.com webhook to sync task status changes back to local database in real time
+### Evaluation
 
+* DeepEval
+* MLflow
+
+### Deployment
+
+* Streamlit Cloud
+
+---
+
+## Project Structure
+
+```text
+Meeting-Intelligent-Bot/
+│
+├── app.py
+│
+├── app/
+│   ├── pipeline/
+│   │   ├── transcript_preprocessor.py
+│   │   ├── llm_call.py
+│   │   └── validator.py
+│   │
+│   ├── db/
+│   │   ├── db_schema.py
+│   │   └── db_writer.py
+│   │
+│   ├── notifications/
+│   │   ├── notification_engine.py
+│   │   ├── gmail_client.py
+│   │   └── email_builder.py
+│   │
+│   ├── orchestrator/
+│   │   └── main.py
+│   │
+│   └── evaluation/
+│       ├── evaluation.py
+│       └── generate_json.py
+│
+└── requirements.txt
+```
+
+---
+
+## Workflow
+
+### Step 1
+
+Upload a meeting transcript.
+
+### Step 2
+
+Transcript is cleaned and preprocessed.
+
+### Step 3
+
+Google Gemini extracts structured information.
+
+### Step 4
+
+The extracted JSON is validated.
+
+### Step 5
+
+Meeting insights are stored in SQLite.
+
+### Step 6
+
+Personalized notifications are generated and sent.
+
+### Step 7
+
+Results are displayed through the Streamlit dashboard.
+
+---
+
+## Example Outputs
+
+### Action Items
+
+```json
+{
+  "id": "task_001",
+  "title": "Prepare sprint planning document",
+  "owner": "Rishabh Sharma",
+  "due_date": "2026-06-10",
+  "priority": "high",
+  "status": "open"
+}
+```
+
+### Decision
+
+```json
+{
+  "id": "dec_001",
+  "decision": "Frontend release will be moved to next sprint",
+  "status": "confirmed"
+}
+```
+
+### Blocker
+
+```json
+{
+  "id": "blk_001",
+  "task": "API Integration",
+  "blocked_by": "Pending client credentials"
+}
+```
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/<username>/Meeting-Intelligent-Bot.git
+
+cd Meeting-Intelligent-Bot
+
+pip install -r requirements.txt
+```
+
+---
+
+## Environment Variables
+
+Create a `.env` file:
+
+```env
+API_KEY=your_gemini_api_key
+API_MODEL=gemini-model-name
+
+GMAIL_CLIENT_ID=your_client_id
+GMAIL_CLIENT_SECRET=your_client_secret
+GMAIL_REFRESH_TOKEN=your_refresh_token
+```
+
+---
+
+## Running Locally
+
+```bash
+streamlit run app.py
+```
+
+---
+
+## Future Enhancements
+
+* Microsoft Teams Integration
+* Zoom Integration
+* Google Meet API Integration
+* ClickUp Task Creation
+* Monday.com Integration
+* Slack Notifications
+* Vector Database Memory
+* RAG-based Meeting Search
+* Multi-Meeting Analytics Dashboard
+* Role-Based Access Control
+
+---
+
+## Author
+
+**Amreeta Surana**
+
+AI/ML Engineer | Generative AI | LLM Applications | Data Science
+
+LinkedIn: https://linkedin.com/in/AmreetaSurana
+
+GitHub: https://github.com/AmreetaSurana
