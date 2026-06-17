@@ -4,4 +4,4 @@ import streamlit as st
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY") or st.secrets["API_KEY"]
-API_MODEL = os.getenv("API_KEY") or st.secrets["API_MODEL"]
+API_MODEL = os.getenv("API_MODEL") or st.secrets["API_MODEL"]
